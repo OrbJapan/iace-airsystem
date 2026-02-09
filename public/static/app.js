@@ -556,9 +556,11 @@ function showBookingPage() {
   
   // Get elements
   const mainContent = document.getElementById('mainContent');
+  const mainFooter = document.getElementById('mainFooter');
   const bookingPage = document.getElementById('bookingPage');
   
   console.log('mainContent element:', mainContent);
+  console.log('mainFooter element:', mainFooter);
   console.log('bookingPage element:', bookingPage);
   
   if (!bookingPage) {
@@ -571,6 +573,12 @@ function showBookingPage() {
   if (mainContent) {
     mainContent.classList.add('hidden');
     console.log('mainContent hidden');
+  }
+  
+  // Hide main footer
+  if (mainFooter) {
+    mainFooter.classList.add('hidden');
+    console.log('mainFooter hidden');
   }
   
   // Show booking page
@@ -1040,6 +1048,12 @@ function backToSearch() {
   const mainContent = document.getElementById('mainContent');
   if (mainContent) {
     mainContent.classList.remove('hidden');
+  }
+  
+  // Show main footer
+  const mainFooter = document.getElementById('mainFooter');
+  if (mainFooter) {
+    mainFooter.classList.remove('hidden');
   }
   
   // Hide booking page

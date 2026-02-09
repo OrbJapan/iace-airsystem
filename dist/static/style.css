@@ -26,9 +26,11 @@ body > div {
 }
 
 #bookingPage {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+  display: none;
+}
+
+#bookingPage:not(.hidden) {
+  display: block !important;
 }
 
 /* Smooth transitions */
