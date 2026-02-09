@@ -7,9 +7,9 @@ app.use(renderer)
 
 app.get('/', (c) => {
   return c.render(
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
       {/* Header */}
-      <header class="bg-blue-600 text-white shadow-lg">
+      <header class="bg-blue-600 text-white shadow-lg flex-shrink-0">
         <div class="container mx-auto px-4 py-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
@@ -26,7 +26,7 @@ app.get('/', (c) => {
       </header>
 
       {/* Main Content */}
-      <main id="mainContent" class="container mx-auto px-4 py-8">
+      <main id="mainContent" class="container mx-auto px-4 py-8 flex-grow">
         {/* Hero Section */}
         <div class="text-center mb-8">
           <h2 class="text-4xl font-bold text-gray-800 mb-2">お得な航空券を検索</h2>
@@ -326,7 +326,7 @@ app.get('/', (c) => {
       </main>
 
       {/* Footer */}
-      <footer class="bg-gray-800 text-white mt-16">
+      <footer class="bg-gray-800 text-white mt-16 flex-shrink-0">
         <div class="container mx-auto px-4 py-8">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -439,7 +439,7 @@ app.get('/', (c) => {
       </div>
 
       {/* Booking Confirmation Page */}
-      <div id="bookingPage" class="hidden">
+      <div id="bookingPage" class="hidden flex-grow">
         <div class="container mx-auto px-4 py-8">
           {/* Back Button */}
           <button 
