@@ -326,7 +326,7 @@ app.get('/', (c) => {
       </main>
 
       {/* Footer */}
-      <footer class="bg-gray-800 text-white mt-16 flex-shrink-0">
+      <footer class="bg-gray-800 text-white flex-shrink-0 mt-auto">
         <div class="container mx-auto px-4 py-8">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
