@@ -25,7 +25,7 @@ https://3000-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai
 
 ## 公開URL
 - **開発環境**: https://3000-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai
-- **GitHub**: （未設定）
+- **GitHub**: https://github.com/yamazakitakayuki/iace-airsystem
 
 ## 完成済み機能
 
