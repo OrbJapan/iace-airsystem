@@ -1,265 +1,372 @@
-# 航空券予約システム (Flight Booking System)
+# FlightSearch - 航空券予約システム
 
 ## プロジェクト概要
-- **名称**: FlightSearch - 航空券予約システム
-- **目的**: Amadeus APIを使用した航空券検索・予約システム
-- **主要機能**: 
-  - 航空券検索フォーム（往復/片道/複数都市対応）
-  - フライト検索結果表示
-  - フィルター・ソート機能
-  - レスポンシブデザイン対応
+- **名前**: FlightSearch
+- **目標**: Amadeus APIを統合した包括的な航空券検索・予約システム
+- **主な機能**: フライト検索、座席クラス選択、座席選択、お客様情報入力、予約管理
 
 ## 公開URL
 - **開発環境**: https://3000-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai
-- **GitHub**: (未設定)
+- **GitHub**: （未設定）
 
 ## 完成済み機能
 
-### 1. 検索フォーム
-- ✅ **旅程タイプ選択**: 往復/片道/複数都市
-- ✅ **出発地・目的地入力**: 空港コード対応
-- ✅ **日付選択**: 出発日・帰国日
-- ✅ **乗客数選択**: 大人/子供/幼児の個別カウント
-- ✅ **座席クラス選択**: エコノミー/プレミアムエコノミー/ビジネス/ファースト
-- ✅ **直行便のみオプション**: チェックボックス
+### 1. フライト検索機能
+- **旅程タイプ選択**: 往復、片道、複数都市
+- **出発地・目的地入力**: 空港コード対応
+- **日付選択**: 出発日、帰国日
+- **乗客情報**: 大人、子供、幼児の人数設定
+- **座席クラス**: エコノミー、プレミアムエコノミー、ビジネス、ファースト
+- **直行便のみオプション**: フィルター機能
 
-### 2. 検索結果表示
-- ✅ **フライトカード**: 往復便情報を見やすく表示
-- ✅ **航空会社ロゴ**: 各航空会社のロゴ画像表示（ダミー画像使用、Amadeus API統合後に実際のロゴを取得）
-- ✅ **航空会社情報**: 名称、便名
-- ✅ **フライト詳細**: 出発時刻、到着時刻、所要時間
-- ✅ **経由地情報**: 直行便/経由便の表示
-- ✅ **価格表示**: 1人あたりの往復料金
-- ✅ **手荷物情報**: 手荷物込みの表示
+### 2. 検索結果表示機能
+- **フライトカード**: 航空会社情報、フライト詳細、価格表示
+- **航空会社ロゴ**: Google Flights CDNから取得（ダミー、API統合後に実ロゴ）
+- **経由地情報**: 直行便、1回経由、2回以上経由
+- **価格表示**: 1人あたりの往復価格
+- **手荷物情報**: 受託手荷物込み
 
-### 3. 座席クラス選択モーダル 🆕
-- ✅ **モーダル表示**: 「選択する」ボタンクリックでモーダル表示
-- ✅ **往路・復路選択**: 各区間で座席クラスを個別選択
-- ✅ **座席クラスプラン**:
-  - **エコノミー**: 標準座席、機内食付き、受託手荷物1個
-  - **プレミアムエコノミー**: 広々とした座席、優先搭乗、受託手荷物2個（基本料金の1.5倍）
-  - **ビジネス**: フルフラットシート、ラウンジ利用、プレミアム機内食、受託手荷物3個（基本料金の3倍）
-  - **ファースト**: プライベートスイート、ラウンジ利用、シェフ監修機内食、受託手荷物無制限（基本料金の5倍）
-- ✅ **詳細情報表示**:
-  - 残席数表示
-  - 座席クラス別のアメニティ一覧
-  - キャンセル条件
-  - 価格（片道/1名あたり）
-- ✅ **合計金額表示**: リアルタイム計算
-- ✅ **アクセシビリティ**:
-  - キーボード操作対応（Enter/Spaceで選択、Escで閉じる）
-  - ARIA属性実装
-  - フォーカス管理
-- ✅ **レスポンシブデザイン**: モバイル/タブレット/デスクトップ対応
-- ✅ **アニメーション**: スムーズなフェードイン/スライドイン効果
+### 3. フィルター機能
+- **価格帯**: ¥0 - ¥500,000+
+- **経由回数**: 直行便、1回経由、2回以上経由
+- **出発時間帯**: 朝、昼、夕、夜
+- **航空会社**: ANA, JAL, United, Delta, American
 
-### 4. フィルター機能
-- ✅ **価格帯フィルター**: スライダーで範囲選択
-- ✅ **経由回数フィルター**: 直行便/1回経由/2回以上経由
-- ✅ **出発時間帯フィルター**: 朝/昼/夕/夜
-- ✅ **航空会社フィルター**: 複数航空会社選択可能
+### 4. ソート機能
+- **おすすめ順**: デフォルト
+- **最安値順**: 価格順
+- **最短時間順**: フライト時間順
+- **出発時間順**: 出発時刻順
 
-### 5. ソート機能
-- ✅ **おすすめ順**: デフォルトソート
-- ✅ **最安値順**: 価格昇順
-- ✅ **最短時間順**: 所要時間昇順
-- ✅ **出発時間順**: 出発時刻順
+### 5. 座席クラス選択モーダル ✅
+- **往路・復路別選択**: 各区間ごとに座席クラスを選択
+- **4つの座席クラス**: エコノミー、プレミアムエコノミー、ビジネス、ファースト
+- **詳細情報表示**: 残席数、価格、キャンセル条件、機内サービス
+- **リアルタイム料金計算**: 選択に応じた合計金額表示
+- **アクセシビリティ対応**: キーボード操作、ARIA属性、スクリーンリーダー対応
 
-### 6. UI/UX
-- ✅ **レスポンシブデザイン**: モバイル/タブレット/デスクトップ対応
-- ✅ **モダンなデザイン**: Tailwind CSS使用
-- ✅ **航空会社ロゴ**: Google Flights CDNから実際のロゴを表示（70x70px、透過PNG）
-- ✅ **アイコン**: Font Awesome使用
-- ✅ **スムーズアニメーション**: CSS Transition
+### 6. 予約確認画面 ✅ NEW
+- **選択済みフライト情報表示**:
+  - 往路・復路の便名、区間、座席クラス、料金
+  - 視覚的に分かりやすい2カラムレイアウト
+- **座席選択機能（シートマップ）**:
+  - 座席クラスに応じたシートマップ生成
+  - 視覚的な座席ステータス表示（利用可能、選択済み、利用不可、特別席）
+  - リアルタイム座席選択・解除
+  - 選択人数分の座席バリデーション（往路・復路合計）
+  - 特別席の追加料金表示
+  - 選択済み座席のサマリー表示
+- **お客様情報入力フォーム**:
+  - 乗客情報（姓、名、性別、生年月日、パスポート番号、国籍）
+  - 人数分のフォーム自動生成（大人、子供、幼児）
+  - 連絡先情報（メールアドレス、電話番号）
+  - 緊急連絡先情報
+  - 利用規約・プライバシーポリシー同意チェックボックス
+- **最終料金計算・表示**:
+  - 全乗客分の基本料金
+  - 座席アップグレード料金
+  - リアルタイム合計金額表示
+- **バリデーション**:
+  - 必須項目の入力チェック
+  - 座席数の整合性チェック（選択人数 × 2区間）
+  - フォーム入力完全性の検証
 
-### 7. 航空会社ロゴ実装
-- ✅ **実際のロゴ表示**: Google Flights CDN (gstatic.com) を使用
-- ✅ **レスポンシブ対応**: モバイルでは60x30px、デスクトップでは80x40px
-- ✅ **対応航空会社**:
-  - ANA（全日空）: NH
-  - JAL（日本航空）: JL
-  - ユナイテッド航空: UA
-  - デルタ航空: DL
-  - アメリカン航空: AA
-- ✅ **ロゴURL形式**: `https://www.gstatic.com/flights/airline_logos/70px/{IATA_CODE}.png`
-- ⏳ **Amadeus API統合後**: API レスポンスから航空会社コードを取得し、同じURL形式でロゴを表示予定
+### 7. UI/UX機能
+- **レスポンシブデザイン**: モバイル、タブレット、デスクトップ対応
+- **TailwindCSS**: 高速なスタイリング
+- **Font Awesome**: アイコン表示
+- **CSS Transition/Animation**: スムーズなアニメーション効果
+- **キーボードナビゲーション**: Tab、Enter、Space、Escapeキー対応
+- **アクセシビリティ**: ARIA属性、フォーカス管理
 
-## 未実装機能
+## 航空会社ロゴ実装
 
-### バックエンド統合
-- ❌ **Amadeus API統合**: 実際のフライトデータ取得
-- ❌ **認証機能**: ユーザーログイン/登録
-- ❌ **予約機能**: フライト予約処理（座席クラス選択データをバックエンドへ送信）
-- ❌ **決済機能**: 支払い処理
-- ❌ **予約管理**: 予約確認/キャンセル
-- ❌ **メール通知**: 予約確認メール
+### ロゴの取得方法
+- **ソース**: Google Flights CDN (gstatic.com)
+- **URL形式**: `https://www.gstatic.com/flights/airline_logos/70px/{IATA_CODE}.png`
+- **対応航空会社**:
+  - ANA (NH): 全日空
+  - JAL (JL): 日本航空
+  - UA: ユナイテッド航空
+  - DL: デルタ航空
+  - AA: アメリカン航空
 
-### データベース
-- ❌ **ユーザー情報保存**: Cloudflare D1使用予定
-- ❌ **予約履歴保存**: 予約データ永続化（座席クラス情報含む）
-- ❌ **お気に入り機能**: フライト保存機能
+### Amadeus API統合後の動作
+- Amadeus APIから取得した航空会社コード（IATA）を使用
+- 上記URL形式で航空会社ロゴを自動表示
+- フォールバック: ロゴ読み込み失敗時は航空会社コードを表示
 
-### 高度な機能
-- ❌ **多言語対応**: 英語、中国語など
-- ❌ **価格アラート**: 価格変動通知
-- ❌ **おすすめ機能**: AIベースのおすすめ
-- ❌ **座席マップ選択**: インタラクティブ座席マップ（現在は座席クラスレベルの選択のみ）
+## 未実装機能（今後の開発予定）
 
-## 推奨される次のステップ
+### Phase 1: Amadeus API統合
+- [ ] Amadeus APIアカウント取得・設定
+- [ ] フライト検索API統合 (`/api/search/flights`)
+- [ ] フライトオファーAPI統合 (`/api/flight/offers`)
+- [ ] 予約作成API統合 (`/api/booking/create`)
+- [ ] 環境変数設定 (AMADEUS_API_KEY, AMADEUS_API_SECRET)
 
-### フェーズ1: Amadeus API統合 (最優先)
-1. **Amadeus APIアカウント取得**
-   - https://developers.amadeus.com/ でアカウント作成
-   - API Key取得
+### Phase 2: データベース実装
+- [ ] Cloudflare D1データベース作成
+- [ ] マイグレーションファイル作成
+  - users テーブル
+  - bookings テーブル
+  - passengers テーブル
+  - payments テーブル
+- [ ] データベース統合
 
-2. **APIルート実装**
-   - `/api/search/flights` - フライト検索
-   - `/api/flight/offers` - フライトオファー詳細
-   - `/api/booking/create` - 予約作成
+### Phase 3: 認証・決済機能
+- [ ] ユーザー認証（Auth0 / Clerk）
+- [ ] 決済機能（Stripe）
+- [ ] 予約確認メール送信
+- [ ] 予約管理ダッシュボード
 
-3. **環境変数設定**
-   - `AMADEUS_API_KEY`
-   - `AMADEUS_API_SECRET`
-
-### フェーズ2: データベース実装
-1. **Cloudflare D1セットアップ**
-   ```bash
-   npx wrangler d1 create webapp-production
-   ```
-
-2. **マイグレーション作成**
-   - ユーザーテーブル
-   - 予約テーブル
-   - お気に入りテーブル
-
-### フェーズ3: 認証・決済
-1. **認証実装** (Auth0 or Clerk推奨)
-2. **決済統合** (Stripe推奨)
+### Phase 4: 追加機能
+- [ ] マイページ機能
+- [ ] 予約履歴表示
+- [ ] 予約変更・キャンセル機能
+- [ ] 多言語対応
+- [ ] 通貨選択機能
 
 ## データアーキテクチャ
 
-### 現在のデータモデル（フロントエンドのみ）
+### 現在のデータモデル
+
+#### SearchCriteria（フロントエンド）
 ```javascript
-SearchCriteria {
-  from: string,          // 出発地
-  to: string,            // 目的地
-  departureDate: Date,   // 出発日
-  returnDate: Date,      // 帰国日
-  tripType: string,      // 旅程タイプ
+{
+  from: "TYO",
+  to: "JFK",
+  departureDate: "2026-02-16",
+  returnDate: "2026-02-23",
   passengers: {
-    adults: number,
-    children: number,
-    infants: number
+    adults: 1,
+    children: 0,
+    infants: 0
   },
-  cabinClass: string,    // 座席クラス
-  directFlights: boolean // 直行便のみ
-}
-
-FlightResult {
-  airline: string,       // 航空会社
-  flightNumber: string,  // 便名
-  departure: DateTime,   // 出発時刻
-  arrival: DateTime,     // 到着時刻
-  duration: string,      // 所要時間
-  stops: number,         // 経由回数
-  price: number,         // 基本料金
-  baggage: boolean       // 手荷物込み
-}
-
-SeatClassSelection {
-  outbound: {
-    class: string,        // 座席クラス（economy/premium_economy/business/first）
-    className: string,    // 座席クラス名（日本語）
-    price: number         // 片道料金
-  },
-  return: {
-    class: string,
-    className: string,
-    price: number
-  },
-  totalPrice: number      // 合計金額
-}
-
-BookingData {
-  flight: string,         // フライト番号
-  route: {
-    from: string,         // 出発地
-    to: string,           // 目的地
-    fromCity: string,
-    toCity: string
-  },
-  seatClasses: SeatClassSelection,
-  totalPrice: number      // 総額
+  cabinClass: "economy",
+  directFlights: false
 }
 ```
 
-### 将来のストレージ
-- **Cloudflare D1**: ユーザー情報、予約履歴
-- **Cloudflare KV**: セッション管理、キャッシュ
-- **Amadeus API**: リアルタイムフライトデータ
+#### FlightResult（フロントエンド）
+```javascript
+{
+  flightNumber: "AA101",
+  airline: {
+    name: "アメリカン航空",
+    code: "AA",
+    logo: "https://www.gstatic.com/flights/airline_logos/70px/AA.png"
+  },
+  route: {
+    from: "TYO",
+    to: "JFK",
+    fromCity: "東京",
+    toCity: "ニューヨーク"
+  },
+  outbound: {
+    departure: "08:00",
+    arrival: "21:00",
+    duration: "13時間00分"
+  },
+  return: {
+    departure: "21:00",
+    arrival: "08:00",
+    duration: "13時間00分"
+  },
+  stops: {
+    type: "direct",
+    label: "直行便"
+  },
+  price: 80000
+}
+```
+
+#### SeatClass（座席クラス）
+```javascript
+{
+  economy: {
+    name: "エコノミー",
+    amenities: ["標準座席", "機内食付き", "受託手荷物 1個"],
+    cancellation: "キャンセル料: 50%",
+    priceMultiplier: 1.0,
+    seatsAvailable: 12
+  },
+  premium_economy: {
+    name: "プレミアムエコノミー",
+    amenities: ["広々とした座席", "優先搭乗", "機内食付き", "受託手荷物 2個"],
+    cancellation: "キャンセル料: 30%",
+    priceMultiplier: 1.5,
+    seatsAvailable: 7
+  },
+  business: {
+    name: "ビジネス",
+    amenities: ["フルフラットシート", "ラウンジ利用", "プレミアム機内食", "受託手荷物 3個"],
+    cancellation: "キャンセル料: 20%",
+    priceMultiplier: 3.0,
+    seatsAvailable: 5
+  },
+  first: {
+    name: "ファースト",
+    amenities: ["プライベートスイート", "ラウンジ利用", "シェフ監修機内食", "受託手荷物 無制限"],
+    cancellation: "キャンセル無料",
+    priceMultiplier: 5.0,
+    seatsAvailable: 3
+  }
+}
+```
+
+#### BookingData（予約データ）
+```javascript
+{
+  flight: {
+    flightNumber: "AA101",
+    basePrice: 80000,
+    route: {
+      from: "TYO",
+      to: "JFK",
+      fromCity: "東京",
+      toCity: "ニューヨーク"
+    }
+  },
+  seatClasses: {
+    outbound: {
+      class: "business",
+      className: "ビジネス",
+      price: 240000
+    },
+    return: {
+      class: "economy",
+      className: "エコノミー",
+      price: 80000
+    }
+  },
+  selectedSeats: {
+    outbound: [
+      { seatId: "outbound-5A", row: "5", column: "A", price: 0 }
+    ],
+    return: [
+      { seatId: "return-18B", row: "18", column: "B", price: 21009 }
+    ]
+  },
+  passengers: [
+    {
+      index: 1,
+      lastName: "山田",
+      firstName: "太郎",
+      gender: "male",
+      dob: "1990-01-01",
+      passport: "TK1234567",
+      nationality: "JP",
+      category: "adult"
+    }
+  ],
+  contact: {
+    email: "example@email.com",
+    phone: "090-1234-5678",
+    emergencyName: "山田 花子",
+    emergencyPhone: "090-9876-5432"
+  },
+  totalPrice: 341009
+}
+```
+
+### ストレージサービス（予定）
+- **Cloudflare D1**: SQLiteベースのリレーショナルデータベース
+- **Cloudflare KV**: キーバリューストア（セッション管理、キャッシュ）
+- **Amadeus API**: フライトデータの取得元
 
 ## 使用方法
 
-### 1. フライト検索
-1. 出発地と目的地を入力（例: 東京 (TYO)、ニューヨーク (JFK)）
-2. 出発日と帰国日を選択
-3. 乗客ボタンをクリックして人数を設定
-4. 座席クラスを選択
-5. 必要に応じて「直行便のみ」をチェック
-6. 「フライトを検索」ボタンをクリック
+### フライト検索から予約まで
+1. **検索**: 出発地、目的地、日付、人数、座席クラスを入力してフライトを検索
+2. **結果確認**: 検索結果から希望のフライトを選択
+3. **座席クラス選択**: 往路・復路それぞれの座席クラスを選択（モーダル表示）
+4. **予約内容確認**: 選択したフライト情報と料金を確認
+5. **座席選択**: シートマップから希望の座席を選択（人数分×往復）
+6. **お客様情報入力**: 全乗客の情報を入力
+7. **支払い**: 合計金額を確認して支払いへ進む
 
-### 2. 結果の絞り込み
-- 左側のフィルターで価格帯、経由回数、出発時間帯、航空会社を選択
-- 上部のドロップダウンでソート順を変更
+### 現在の状態
+- **モックデータ**: フライト検索結果はダミーデータ
+- **予約機能**: 未実装（コンソールログ出力のみ）
+- **認証**: 未実装
 
-### 3. フライト選択
-- 各フライトカードの「選択する」ボタンをクリック
-- **座席クラス選択モーダル**が表示される
-  1. 往路の座席クラスを選択（エコノミー/プレミアムエコノミー/ビジネス/ファースト）
-  2. 復路の座席クラスを選択
-  3. 合計金額を確認
-  4. 「予約を続ける」ボタンをクリック
-- ※現在はモックデータで動作、Amadeus API統合後に実際の予約が可能
+## デプロイメント
 
-## デプロイ情報
-- **プラットフォーム**: Cloudflare Pages (準備完了)
-- **ステータス**: ✅ 開発環境で動作中
-- **技術スタック**:
-  - **フレームワーク**: Hono (TypeScript)
-  - **フロントエンド**: Tailwind CSS, Font Awesome
-  - **ランタイム**: Cloudflare Workers
-  - **ビルドツール**: Vite
-- **最終更新**: 2026-02-09
+### プラットフォーム
+- **Cloudflare Pages**: エッジデプロイメント
+
+### 技術スタック
+- **バックエンド**: Hono (TypeScript)
+- **フロントエンド**: TailwindCSS, Font Awesome, Vanilla JavaScript
+- **ランタイム**: Cloudflare Workers
+- **ビルドツール**: Vite
+
+### 最終更新日
+2026-02-09
 
 ## 開発コマンド
 
 ```bash
-# 開発サーバー起動
+# 開発サーバー起動（サンドボックス環境）
 npm run build
 pm2 start ecosystem.config.cjs
-
-# サービス確認
-pm2 list
-pm2 logs webapp --nostream
 
 # ビルド
 npm run build
 
-# 本番デプロイ（Amadeus API統合後）
-npm run deploy:prod
+# PM2管理
+pm2 list
+pm2 logs webapp --nostream
+pm2 restart webapp
+pm2 delete webapp
+
+# ポートクリーンアップ
+fuser -k 3000/tcp
+
+# サービステスト
+curl http://localhost:3000
 ```
 
 ## 注意事項
+- **現在はモックデータを使用**: 実際のフライトデータはAmadeus API統合後に取得
+- **予約機能は未実装**: 現在はコンソールログ出力のみ
+- **認証機能なし**: ユーザー認証は未実装
 
-### 現在の制限
-- モックデータで動作（実際のAPI連携なし）
-- 予約機能は未実装
-- ユーザー認証なし
-
-### セキュリティ対応予定
-- Amadeus APIキーは環境変数で管理
-- Cloudflare Secrets使用
-- CORS設定適用済み
+## セキュリティ
+- **API キー**: 環境変数で管理（.env, Cloudflare Secrets）
+- **CORS**: 適切なCORS設定を実装
+- **入力検証**: フロントエンド・バックエンド両方で実装予定
 
 ## ライセンス
-Copyright © 2026 FlightSearch. All rights reserved.
+© 2026 FlightSearch. All rights reserved.
+
+## 推奨される次のステップ
+
+### Phase 1: Amadeus API統合（優先度: 高）
+1. Amadeusアカウント取得
+2. API認証情報の取得・設定
+3. フライト検索APIの統合
+4. 実データへの切り替え
+
+### Phase 2: データベース実装（優先度: 高）
+1. Cloudflare D1データベースの作成
+2. マイグレーションファイルの作成
+3. ORMライブラリの導入（Drizzle ORMなど）
+
+### Phase 3: 認証・決済（優先度: 中）
+1. Auth0 または Clerkの統合
+2. Stripe決済の統合
+3. 予約確認メール送信機能
+
+### Phase 4: UX改善（優先度: 低）
+1. ローディング状態の改善
+2. エラーハンドリングの強化
+3. 多言語対応
+4. ダークモード対応
+
+---
+
+**開発環境URL**: https://3000-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai
+
+このREADMEは開発の進捗に応じて随時更新されます。
