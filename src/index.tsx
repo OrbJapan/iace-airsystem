@@ -26,7 +26,7 @@ app.get('/', (c) => {
       </header>
 
       {/* Main Content */}
-      <main class="container mx-auto px-4 py-8">
+      <main id="mainContent" class="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <div class="text-center mb-8">
           <h2 class="text-4xl font-bold text-gray-800 mb-2">お得な航空券を検索</h2>

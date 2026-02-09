@@ -551,32 +551,72 @@ function confirmSeatClassSelection() {
 
 // Show booking page
 function showBookingPage() {
-  // Hide search results
-  document.getElementById('searchResults').classList.add('hidden');
+  console.log('showBookingPage called');
+  console.log('bookingState:', bookingState);
+  
+  // Get elements
+  const mainContent = document.getElementById('mainContent');
+  const bookingPage = document.getElementById('bookingPage');
+  
+  console.log('mainContent element:', mainContent);
+  console.log('bookingPage element:', bookingPage);
+  
+  if (!bookingPage) {
+    console.error('bookingPage element not found!');
+    alert('予約ページが見つかりません。ページを再読み込みしてください。');
+    return;
+  }
+  
+  // Hide main content (search form and results)
+  if (mainContent) {
+    mainContent.classList.add('hidden');
+    console.log('mainContent hidden');
+  }
   
   // Show booking page
-  document.getElementById('bookingPage').classList.remove('hidden');
+  bookingPage.classList.remove('hidden');
+  console.log('bookingPage visible');
   
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
   // Generate flight summary
-  generateFlightSummary();
+  try {
+    generateFlightSummary();
+    console.log('Flight summary generated');
+  } catch (error) {
+    console.error('Error generating flight summary:', error);
+  }
   
   // Generate seat maps
-  generateSeatMap('outbound');
-  generateSeatMap('return');
+  try {
+    generateSeatMap('outbound');
+    generateSeatMap('return');
+    console.log('Seat maps generated');
+  } catch (error) {
+    console.error('Error generating seat maps:', error);
+  }
   
   // Generate passenger forms
-  generatePassengerForms();
+  try {
+    generatePassengerForms();
+    console.log('Passenger forms generated');
+  } catch (error) {
+    console.error('Error generating passenger forms:', error);
+  }
   
   // Update total passengers count
   const totalPassengers = passengers.adults + passengers.children + passengers.infants;
-  document.getElementById('totalPassengersCount').textContent = totalPassengers;
-  document.getElementById('requiredSeats').textContent = totalPassengers;
+  const totalPassengersCountEl = document.getElementById('totalPassengersCount');
+  const requiredSeatsEl = document.getElementById('requiredSeats');
+  
+  if (totalPassengersCountEl) totalPassengersCountEl.textContent = totalPassengers;
+  if (requiredSeatsEl) requiredSeatsEl.textContent = totalPassengers;
   
   // Update final total price (multiply by number of passengers)
   updateFinalTotalPrice();
+  
+  console.log('showBookingPage completed');
 }
 
 // Generate flight summary
@@ -996,8 +1036,11 @@ function updateProceedButton() {
 
 // Back to search
 function backToSearch() {
-  // Show search results
-  document.getElementById('searchResults').classList.remove('hidden');
+  // Show main content
+  const mainContent = document.getElementById('mainContent');
+  if (mainContent) {
+    mainContent.classList.remove('hidden');
+  }
   
   // Hide booking page
   document.getElementById('bookingPage').classList.add('hidden');
@@ -1006,7 +1049,12 @@ function backToSearch() {
   bookingState.selectedSeats = { outbound: [], return: [] };
   
   // Scroll to results
-  document.getElementById('searchResults').scrollIntoView({ behavior: 'smooth' });
+  const searchResults = document.getElementById('searchResults');
+  if (searchResults && !searchResults.classList.contains('hidden')) {
+    searchResults.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 // Proceed to payment
