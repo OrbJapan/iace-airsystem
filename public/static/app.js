@@ -181,7 +181,7 @@ function generateSampleFlights(from, to, depDate, retDate) {
     const card = `
       <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition p-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-          {/* Flight Info */}
+          <!-- Flight Info -->
           <div class="flex-1">
             <div class="flex items-center space-x-3 mb-4">
               <div class="w-20 h-10 bg-white border border-gray-200 rounded flex items-center justify-center overflow-hidden">
@@ -193,7 +193,7 @@ function generateSampleFlights(from, to, depDate, retDate) {
               </div>
             </div>
 
-            {/* Outbound Flight */}
+            <!-- Outbound Flight -->
             <div class="flex items-center space-x-6 mb-3">
               <div class="text-center">
                 <div class="text-2xl font-bold text-gray-800">${departureTime}</div>
@@ -214,7 +214,7 @@ function generateSampleFlights(from, to, depDate, retDate) {
               </div>
             </div>
 
-            {/* Return Flight */}
+            <!-- Return Flight -->
             <div class="flex items-center space-x-6">
               <div class="text-center">
                 <div class="text-xl font-bold text-gray-800">${arrivalTime}</div>
@@ -235,7 +235,7 @@ function generateSampleFlights(from, to, depDate, retDate) {
             </div>
           </div>
 
-          {/* Price and Button */}
+          <!-- Price and Button -->
           <div class="md:text-right md:ml-6 w-full md:w-auto">
             <div class="mb-3">
               <div class="text-3xl font-bold text-blue-600">¥${basePrice.toLocaleString()}</div>
@@ -254,7 +254,7 @@ function generateSampleFlights(from, to, depDate, retDate) {
           </div>
         </div>
 
-        {/* Additional Info */}
+        <!-- Additional Info -->
         <div class="mt-4 pt-4 border-t border-gray-200">
           <div class="flex flex-wrap gap-4 text-sm text-gray-600">
             <span><i class="fas fa-plane mr-1 text-blue-500"></i> ${stop.type === 'direct' ? '直行便' : stop.label}</span>
