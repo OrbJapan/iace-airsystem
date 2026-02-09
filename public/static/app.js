@@ -5,6 +5,9 @@ let passengers = {
   infants: 0
 };
 
+// Multi-city flight counter
+let multiCityFlightCount = 2;
+
 // Initialize date inputs with default values
 document.addEventListener('DOMContentLoaded', function() {
   // Set default dates (today + 7 days for departure, today + 14 days for return)
@@ -18,16 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('departureDate').value = departureDate.toISOString().split('T')[0];
   document.getElementById('returnDate').value = returnDate.toISOString().split('T')[0];
 
-  // Trip type change handler
-  document.querySelectorAll('input[name="tripType"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-      const returnDateField = document.getElementById('returnDateField');
-      if (this.value === 'oneway') {
-        returnDateField.style.display = 'none';
-      } else {
-        returnDateField.style.display = 'block';
-      }
-    });
+  // Set default dates for multi-city flights
+  const multiCityDates = document.querySelectorAll('.multi-city-date');
+  multiCityDates.forEach((dateInput, index) => {
+    const flightDate = new Date(today);
+    flightDate.setDate(today.getDate() + 7 + (index * 3));
+    dateInput.value = flightDate.toISOString().split('T')[0];
+  });
   });
 
   // Passenger button click handler
@@ -85,6 +85,117 @@ function updatePassengerDisplay() {
 // Close passenger dropdown
 function closePassengerDropdown() {
   document.getElementById('passengerDropdown').classList.add('hidden');
+}
+
+// Handle trip type change
+function handleTripTypeChange() {
+  const tripType = document.querySelector('input[name="tripType"]:checked').value;
+  const singleTripFields = document.getElementById('singleTripFields');
+  const multiCityFields = document.getElementById('multiCityFields');
+  const returnDateField = document.getElementById('returnDateField');
+  
+  if (tripType === 'multicity') {
+    // Show multi-city fields
+    singleTripFields.classList.add('hidden');
+    multiCityFields.classList.remove('hidden');
+  } else {
+    // Show single/round trip fields
+    singleTripFields.classList.remove('hidden');
+    multiCityFields.classList.add('hidden');
+    
+    // Handle return date visibility for oneway
+    if (tripType === 'oneway') {
+      returnDateField.style.display = 'none';
+    } else {
+      returnDateField.style.display = 'block';
+    }
+  }
+}
+
+// Add multi-city flight
+function addMultiCityFlight() {
+  multiCityFlightCount++;
+  const container = document.getElementById('multiCityFlightsContainer');
+  
+  const today = new Date();
+  const flightDate = new Date(today);
+  flightDate.setDate(today.getDate() + 7 + (multiCityFlightCount - 1) * 3);
+  
+  const flightHTML = `
+    <div class="multi-city-flight mb-4 p-4 border border-gray-200 rounded-lg" data-flight-index="${multiCityFlightCount}">
+      <div class="flex justify-between items-center mb-3">
+        <h4 class="font-semibold text-gray-800">フライト ${multiCityFlightCount}</h4>
+        <button 
+          type="button" 
+          onclick="removeMultiCityFlight(this)"
+          class="text-red-600 hover:text-red-800 transition"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">出発地</label>
+          <div class="relative">
+            <i class="fas fa-plane-departure absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input 
+              type="text" 
+              class="multi-city-from w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="出発地"
+            />
+          </div>
+        </div>
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">目的地</label>
+          <div class="relative">
+            <i class="fas fa-plane-arrival absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input 
+              type="text" 
+              class="multi-city-to w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="目的地"
+            />
+          </div>
+        </div>
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">出発日</label>
+          <div class="relative">
+            <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input 
+              type="date" 
+              class="multi-city-date w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value="${flightDate.toISOString().split('T')[0]}"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  container.insertAdjacentHTML('beforeend', flightHTML);
+}
+
+// Remove multi-city flight
+function removeMultiCityFlight(button) {
+  const flightDiv = button.closest('.multi-city-flight');
+  const flightIndex = parseInt(flightDiv.dataset.flightIndex);
+  
+  // Don't allow removal if only 2 flights remain
+  const totalFlights = document.querySelectorAll('.multi-city-flight').length;
+  if (totalFlights <= 2) {
+    alert('最低2つのフライトが必要です。');
+    return;
+  }
+  
+  flightDiv.remove();
+  
+  // Renumber remaining flights
+  document.querySelectorAll('.multi-city-flight').forEach((flight, index) => {
+    flight.dataset.flightIndex = index + 1;
+    const title = flight.querySelector('h4');
+    title.textContent = `フライト ${index + 1}`;
+  });
+  
+  multiCityFlightCount = document.querySelectorAll('.multi-city-flight').length;
 }
 
 // Search flights

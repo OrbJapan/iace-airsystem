@@ -39,78 +39,177 @@ app.get('/', (c) => {
           {/* Trip Type Selection */}
           <div class="flex flex-wrap gap-4 mb-6">
             <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="radio" name="tripType" value="roundtrip" checked class="w-4 h-4 text-blue-600" />
+              <input type="radio" name="tripType" value="roundtrip" checked class="w-4 h-4 text-blue-600" onchange="handleTripTypeChange()" />
               <span class="text-gray-700 font-medium">往復</span>
             </label>
             <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="radio" name="tripType" value="oneway" class="w-4 h-4 text-blue-600" />
+              <input type="radio" name="tripType" value="oneway" class="w-4 h-4 text-blue-600" onchange="handleTripTypeChange()" />
               <span class="text-gray-700 font-medium">片道</span>
             </label>
             <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="radio" name="tripType" value="multicity" class="w-4 h-4 text-blue-600" />
+              <input type="radio" name="tripType" value="multicity" class="w-4 h-4 text-blue-600" onchange="handleTripTypeChange()" />
               <span class="text-gray-700 font-medium">複数都市</span>
             </label>
           </div>
 
-          {/* Search Fields */}
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {/* From */}
-            <div class="relative">
-              <label class="block text-sm font-medium text-gray-700 mb-2">出発地</label>
+          {/* Single/Round Trip Search Fields */}
+          <div id="singleTripFields">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {/* From */}
               <div class="relative">
-                <i class="fas fa-plane-departure absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input 
-                  type="text" 
-                  id="fromLocation"
-                  placeholder="東京 (TYO)" 
-                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <label class="block text-sm font-medium text-gray-700 mb-2">出発地</label>
+                <div class="relative">
+                  <i class="fas fa-plane-departure absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <input 
+                    type="text" 
+                    id="fromLocation"
+                    placeholder="東京 (TYO)" 
+                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* To */}
-            <div class="relative">
-              <label class="block text-sm font-medium text-gray-700 mb-2">目的地</label>
+              {/* To */}
               <div class="relative">
-                <i class="fas fa-plane-arrival absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input 
-                  type="text" 
-                  id="toLocation"
-                  placeholder="ニューヨーク (JFK)" 
-                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <label class="block text-sm font-medium text-gray-700 mb-2">目的地</label>
+                <div class="relative">
+                  <i class="fas fa-plane-arrival absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <input 
+                    type="text" 
+                    id="toLocation"
+                    placeholder="ニューヨーク (JFK)" 
+                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Departure Date */}
-            <div class="relative">
-              <label class="block text-sm font-medium text-gray-700 mb-2">出発日</label>
+              {/* Departure Date */}
               <div class="relative">
-                <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input 
-                  type="date" 
-                  id="departureDate"
-                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <label class="block text-sm font-medium text-gray-700 mb-2">出発日</label>
+                <div class="relative">
+                  <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <input 
+                    type="date" 
+                    id="departureDate"
+                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Return Date */}
-            <div class="relative" id="returnDateField">
-              <label class="block text-sm font-medium text-gray-700 mb-2">帰国日</label>
-              <div class="relative">
-                <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input 
-                  type="date" 
-                  id="returnDate"
-                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+              {/* Return Date */}
+              <div class="relative" id="returnDateField">
+                <label class="block text-sm font-medium text-gray-700 mb-2">帰国日</label>
+                <div class="relative">
+                  <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                  <input 
+                    type="date" 
+                    id="returnDate"
+                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Passengers and Class */}
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {/* Multi-City Search Fields */}
+          <div id="multiCityFields" class="hidden">
+            <div id="multiCityFlightsContainer">
+              {/* Flight 1 */}
+              <div class="multi-city-flight mb-4 p-4 border border-gray-200 rounded-lg" data-flight-index="1">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="font-semibold text-gray-800">フライト 1</h4>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">出発地</label>
+                    <div class="relative">
+                      <i class="fas fa-plane-departure absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input 
+                        type="text" 
+                        class="multi-city-from w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="東京 (TYO)"
+                      />
+                    </div>
+                  </div>
+                  <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">目的地</label>
+                    <div class="relative">
+                      <i class="fas fa-plane-arrival absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input 
+                        type="text" 
+                        class="multi-city-to w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="ニューヨーク (JFK)"
+                      />
+                    </div>
+                  </div>
+                  <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">出発日</label>
+                    <div class="relative">
+                      <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input 
+                        type="date" 
+                        class="multi-city-date w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Flight 2 */}
+              <div class="multi-city-flight mb-4 p-4 border border-gray-200 rounded-lg" data-flight-index="2">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="font-semibold text-gray-800">フライト 2</h4>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">出発地</label>
+                    <div class="relative">
+                      <i class="fas fa-plane-departure absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input 
+                        type="text" 
+                        class="multi-city-from w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="ニューヨーク (JFK)"
+                      />
+                    </div>
+                  </div>
+                  <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">目的地</label>
+                    <div class="relative">
+                      <i class="fas fa-plane-arrival absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input 
+                        type="text" 
+                        class="multi-city-to w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="ロサンゼルス (LAX)"
+                      />
+                    </div>
+                  </div>
+                  <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">出発日</label>
+                    <div class="relative">
+                      <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input 
+                        type="date" 
+                        class="multi-city-date w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Add Flight Button */}
+            <button 
+              type="button"
+              onclick="addMultiCityFlight()"
+              class="w-full md:w-auto px-6 py-3 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition font-medium"
+            >
+              <i class="fas fa-plus mr-2"></i>
+              フライトを追加
+            </button>
+          </div>
+
+          {/* Passengers, Class, and Airline */}
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 mt-6">
             {/* Passengers */}
             <div class="relative">
               <label class="block text-sm font-medium text-gray-700 mb-2">乗客</label>
@@ -179,6 +278,22 @@ app.get('/', (c) => {
 
                   <button type="button" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" onclick="closePassengerDropdown()">完了</button>
                 </div>
+              </div>
+            </div>
+
+            {/* Airline Selection */}
+            <div class="relative">
+              <label class="block text-sm font-medium text-gray-700 mb-2">航空会社</label>
+              <div class="relative">
+                <i class="fas fa-plane absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <select id="preferredAirline" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">すべて</option>
+                  <option value="NH">ANA (NH)</option>
+                  <option value="JL">JAL (JL)</option>
+                  <option value="UA">ユナイテッド航空 (UA)</option>
+                  <option value="DL">デルタ航空 (DL)</option>
+                  <option value="AA">アメリカン航空 (AA)</option>
+                </select>
               </div>
             </div>
 
