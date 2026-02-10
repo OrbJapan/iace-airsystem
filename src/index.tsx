@@ -477,6 +477,12 @@ app.get('/', (c) => {
           </div>
           <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2026 FlightSearch. All rights reserved.</p>
+            <p class="mt-2 text-sm">
+              <a href="https://3001-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai" target="_blank" class="text-blue-400 hover:text-blue-300">
+                <i class="fas fa-user-shield mr-1"></i>
+                管理画面（モック）
+              </a>
+            </p>
           </div>
         </div>
       </footer>
