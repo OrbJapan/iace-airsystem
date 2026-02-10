@@ -17,9 +17,15 @@ app.get('/', (c) => {
               <h1 class="text-2xl font-bold">FlightSearch</h1>
             </div>
             <nav class="hidden md:flex space-x-6">
-              <a href="/" class="hover:text-blue-200 transition">ホーム</a>
-              <a href="#" class="hover:text-blue-200 transition">予約確認</a>
-              <a href="#" class="hover:text-blue-200 transition">お問い合わせ</a>
+              <a href="/" onclick="showHomePage(); return false;" class="hover:text-blue-200 transition">ホーム</a>
+              <a href="#" onclick="showMyPage(); return false;" class="hover:text-blue-200 transition" id="myPageLink">
+                <i class="fas fa-user mr-1"></i>
+                マイページ
+              </a>
+              <a href="#" onclick="handleLogout(); return false;" class="hover:text-blue-200 transition hidden" id="logoutLink">
+                <i class="fas fa-sign-out-alt mr-1"></i>
+                ログアウト
+              </a>
             </nav>
           </div>
         </div>
@@ -1493,6 +1499,305 @@ app.get('/', (c) => {
               </div>
             </div>
           </footer>
+        </div>
+      </div>
+
+      {/* My Page */}
+      <div id="myPage" class="hidden fixed inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-y-auto z-40">
+        <div class="min-h-screen flex flex-col">
+          <div class="container mx-auto px-4 py-8 flex-grow">
+            {/* Back Button */}
+            <button 
+              onclick="backToHome()" 
+              class="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>
+              ホームに戻る
+            </button>
+
+            {/* My Page Header */}
+            <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+              <h2 class="text-3xl font-bold text-gray-800 mb-2 flex items-center">
+                <i class="fas fa-user-circle text-blue-600 mr-3"></i>
+                マイページ
+              </h2>
+              <p class="text-gray-600" id="myPageUserEmail">
+                ログイン中: user@example.com
+              </p>
+            </div>
+
+            {/* Tab Navigation */}
+            <div class="bg-white rounded-2xl shadow-xl mb-6 overflow-hidden">
+              <div class="flex border-b">
+                <button
+                  onclick="switchMyPageTab('bookings')"
+                  id="tabBookings"
+                  class="flex-1 py-4 px-6 font-semibold text-center transition mypage-tab active"
+                >
+                  <i class="fas fa-list mr-2"></i>
+                  予約履歴
+                </button>
+                <button
+                  onclick="switchMyPageTab('profile')"
+                  id="tabProfile"
+                  class="flex-1 py-4 px-6 font-semibold text-center transition mypage-tab"
+                >
+                  <i class="fas fa-user-edit mr-2"></i>
+                  会員情報
+                </button>
+              </div>
+            </div>
+
+            {/* Bookings Tab */}
+            <div id="bookingsTab" class="mypage-tab-content">
+              <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                  <i class="fas fa-history text-blue-600 mr-2"></i>
+                  予約履歴
+                </h3>
+                
+                <div id="bookingsList" class="space-y-4">
+                  {/* Booking items will be inserted here by JavaScript */}
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Tab */}
+            <div id="profileTab" class="mypage-tab-content hidden">
+              <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                  <i class="fas fa-id-card text-blue-600 mr-2"></i>
+                  会員情報
+                </h3>
+
+                <form id="profileForm" class="space-y-6">
+                  {/* Email */}
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      メールアドレス
+                    </label>
+                    <input
+                      type="email"
+                      id="profileEmail"
+                      disabled
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                    />
+                  </div>
+
+                  {/* Name */}
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        姓 <span class="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="profileLastName"
+                        placeholder="山田"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        名 <span class="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="profileFirstName"
+                        placeholder="太郎"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      電話番号 <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      id="profilePhone"
+                      placeholder="090-1234-5678"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Date of Birth */}
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      生年月日 <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="profileDob"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Gender */}
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      性別 <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="profileGender"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">選択してください</option>
+                      <option value="male">男性</option>
+                      <option value="female">女性</option>
+                      <option value="other">その他</option>
+                    </select>
+                  </div>
+
+                  {/* Passport */}
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      パスポート番号
+                    </label>
+                    <input
+                      type="text"
+                      id="profilePassport"
+                      placeholder="AB1234567"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Nationality */}
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      国籍
+                    </label>
+                    <input
+                      type="text"
+                      id="profileNationality"
+                      placeholder="日本"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Save Button */}
+                  <div class="flex justify-end space-x-4">
+                    <button
+                      type="button"
+                      onclick="cancelProfileEdit()"
+                      class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      type="submit"
+                      class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg hover:shadow-xl"
+                    >
+                      <i class="fas fa-save mr-2"></i>
+                      保存する
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer inside my page */}
+          <footer class="bg-gray-800 text-white mt-auto">
+            <div class="container mx-auto px-4 py-8">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                  <h5 class="font-bold text-lg mb-4">FlightSearch</h5>
+                  <p class="text-gray-400">お得な航空券を簡単検索</p>
+                </div>
+                <div>
+                  <h5 class="font-bold text-lg mb-4">リンク</h5>
+                  <ul class="space-y-2 text-gray-400">
+                    <li><a href="#" class="hover:text-white">利用規約</a></li>
+                    <li><a href="#" class="hover:text-white">プライバシーポリシー</a></li>
+                    <li><a href="#" class="hover:text-white">お問い合わせ</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-bold text-lg mb-4">フォロー</h5>
+                  <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook text-2xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter text-2xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram text-2xl"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 FlightSearch. All rights reserved.</p>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+
+      {/* Booking Detail Modal */}
+      <div id="bookingDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="p-6">
+            {/* Modal Header */}
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <i class="fas fa-ticket-alt text-blue-600 mr-2"></i>
+                予約詳細
+              </h3>
+              <button onclick="closeBookingDetailModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+
+            {/* Booking Detail Content */}
+            <div id="bookingDetailContent">
+              {/* Content will be inserted by JavaScript */}
+            </div>
+
+            {/* Cancel Button */}
+            <div class="mt-6 flex justify-end space-x-4">
+              <button
+                onclick="closeBookingDetailModal()"
+                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              >
+                閉じる
+              </button>
+              <button
+                id="cancelBookingBtn"
+                onclick="showCancelConfirmation()"
+                class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              >
+                <i class="fas fa-times-circle mr-2"></i>
+                この予約をキャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cancel Confirmation Modal */}
+      <div id="cancelConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+            キャンセル確認
+          </h3>
+          <p class="text-gray-600 mb-6">
+            この予約をキャンセルしてもよろしいですか？<br/>
+            この操作は取り消すことができません。
+          </p>
+          <div class="flex justify-end space-x-4">
+            <button
+              onclick="closeCancelConfirmation()"
+              class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+            >
+              戻る
+            </button>
+            <button
+              onclick="confirmCancelBooking()"
+              class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+            >
+              キャンセルする
+            </button>
+          </div>
         </div>
       </div>
 

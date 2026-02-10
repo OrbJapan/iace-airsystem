@@ -1682,6 +1682,186 @@ let userSession = {
   userId: null
 };
 
+// User profile data (mock)
+let userProfile = {
+  email: 'user@example.com',
+  lastName: '山田',
+  firstName: '太郎',
+  phone: '090-1234-5678',
+  dob: '1990-01-01',
+  gender: 'male',
+  passport: 'AB1234567',
+  nationality: '日本'
+};
+
+// Mock booking data
+let mockBookings = [
+  {
+    id: 'BK2026021001',
+    status: 'confirmed',
+    statusText: '予約確認済み',
+    bookingDate: '2026-02-08',
+    flight: {
+      outbound: {
+        flightNumber: 'AA101',
+        airline: 'American Airlines',
+        airlineCode: 'AA',
+        from: '東京 (NRT)',
+        to: 'ニューヨーク (JFK)',
+        date: '2026-03-15',
+        departureTime: '10:00',
+        arrivalTime: '08:30',
+        duration: '13時間30分',
+        seatClass: 'ビジネス',
+        seat: '5A'
+      },
+      return: {
+        flightNumber: 'AA102',
+        airline: 'American Airlines',
+        airlineCode: 'AA',
+        from: 'ニューヨーク (JFK)',
+        to: '東京 (NRT)',
+        date: '2026-03-22',
+        departureTime: '14:00',
+        arrivalTime: '17:30+1',
+        duration: '14時間30分',
+        seatClass: 'ビジネス',
+        seat: '5B'
+      }
+    },
+    passengers: [
+      {
+        lastName: '山田',
+        firstName: '太郎',
+        gender: '男性',
+        dob: '1990-01-01',
+        passport: 'AB1234567',
+        nationality: '日本'
+      }
+    ],
+    contact: {
+      email: 'user@example.com',
+      phone: '090-1234-5678'
+    },
+    pricing: {
+      basePrice: 280000,
+      seatUpgrade: 60000,
+      taxFees: 15000,
+      total: 355000
+    }
+  },
+  {
+    id: 'BK2026020502',
+    status: 'confirmed',
+    statusText: '予約確認済み',
+    bookingDate: '2026-02-03',
+    flight: {
+      outbound: {
+        flightNumber: 'NH009',
+        airline: 'ANA',
+        airlineCode: 'NH',
+        from: '東京 (HND)',
+        to: 'ロサンゼルス (LAX)',
+        date: '2026-04-10',
+        departureTime: '17:00',
+        arrivalTime: '10:30',
+        duration: '10時間30分',
+        seatClass: 'プレミアムエコノミー',
+        seat: '15C'
+      },
+      return: {
+        flightNumber: 'NH010',
+        airline: 'ANA',
+        airlineCode: 'NH',
+        from: 'ロサンゼルス (LAX)',
+        to: '東京 (HND)',
+        date: '2026-04-20',
+        departureTime: '11:00',
+        arrivalTime: '14:30+1',
+        duration: '12時間30分',
+        seatClass: 'プレミアムエコノミー',
+        seat: '15D'
+      }
+    },
+    passengers: [
+      {
+        lastName: '山田',
+        firstName: '太郎',
+        gender: '男性',
+        dob: '1990-01-01',
+        passport: 'AB1234567',
+        nationality: '日本'
+      }
+    ],
+    contact: {
+      email: 'user@example.com',
+      phone: '090-1234-5678'
+    },
+    pricing: {
+      basePrice: 150000,
+      seatUpgrade: 30000,
+      taxFees: 12000,
+      total: 192000
+    }
+  },
+  {
+    id: 'BK2026012003',
+    status: 'completed',
+    statusText: '利用済み',
+    bookingDate: '2025-12-15',
+    flight: {
+      outbound: {
+        flightNumber: 'JL002',
+        airline: 'JAL',
+        airlineCode: 'JL',
+        from: '大阪 (KIX)',
+        to: 'サンフランシスコ (SFO)',
+        date: '2026-01-15',
+        departureTime: '16:30',
+        arrivalTime: '09:30',
+        duration: '10時間',
+        seatClass: 'エコノミー',
+        seat: '28A'
+      },
+      return: {
+        flightNumber: 'JL003',
+        airline: 'JAL',
+        airlineCode: 'JL',
+        from: 'サンフランシスコ (SFO)',
+        to: '大阪 (KIX)',
+        date: '2026-01-25',
+        departureTime: '12:00',
+        arrivalTime: '15:00+1',
+        duration: '11時間',
+        seatClass: 'エコノミー',
+        seat: '28B'
+      }
+    },
+    passengers: [
+      {
+        lastName: '山田',
+        firstName: '太郎',
+        gender: '男性',
+        dob: '1990-01-01',
+        passport: 'AB1234567',
+        nationality: '日本'
+      }
+    ],
+    contact: {
+      email: 'user@example.com',
+      phone: '090-1234-5678'
+    },
+    pricing: {
+      basePrice: 85000,
+      seatUpgrade: 0,
+      taxFees: 8000,
+      total: 93000
+    }
+  }
+];
+
+let currentBookingDetail = null;
+
 // OTP storage (in production, this would be server-side)
 let otpStorage = {
   code: null,
@@ -1873,6 +2053,12 @@ function verifyCode() {
     userSession.email = otpStorage.email;
     userSession.userId = 'user_' + Date.now(); // Mock user ID
     
+    // Update profile with email
+    userProfile.email = otpStorage.email;
+    
+    // Update header
+    updateHeaderAuth();
+    
     // Clear OTP
     otpStorage = { code: null, email: null, expiresAt: null };
     
@@ -1972,6 +2158,9 @@ function verifyLoginCode() {
     userSession.email = otpStorage.email;
     userSession.userId = 'user_' + Date.now(); // Mock user ID
     
+    // Update header
+    updateHeaderAuth();
+    
     // Clear OTP
     otpStorage = { code: null, email: null, expiresAt: null };
     
@@ -2033,3 +2222,462 @@ async function sendEmailMock(email, otp, type) {
     messageId: 'mock_' + Date.now()
   };
 }
+
+// ============================================
+// My Page Functions
+// ============================================
+
+// Show My Page
+function showMyPage() {
+  console.log('Showing My Page');
+  
+  // Check if user is authenticated
+  if (!userSession.isAuthenticated) {
+    alert('マイページを利用するにはログインが必要です。');
+    showLoginPage();
+    return;
+  }
+  
+  const mainContent = document.getElementById('mainContent');
+  const mainFooter = document.getElementById('mainFooter');
+  const myPage = document.getElementById('myPage');
+  
+  if (mainContent) mainContent.classList.add('hidden');
+  if (mainFooter) mainFooter.classList.add('hidden');
+  if (myPage) {
+    myPage.classList.remove('hidden');
+    
+    // Update user email display
+    const myPageUserEmail = document.getElementById('myPageUserEmail');
+    if (myPageUserEmail) {
+      myPageUserEmail.textContent = `ログイン中: ${userSession.email}`;
+    }
+    
+    // Load bookings
+    loadBookingsList();
+    
+    // Load profile
+    loadUserProfile();
+    
+    // Show bookings tab by default
+    switchMyPageTab('bookings');
+    
+    window.scrollTo(0, 0);
+  }
+}
+
+// Show Home Page
+function showHomePage() {
+  console.log('Showing Home Page');
+  
+  const mainContent = document.getElementById('mainContent');
+  const mainFooter = document.getElementById('mainFooter');
+  const myPage = document.getElementById('myPage');
+  
+  if (myPage) myPage.classList.add('hidden');
+  if (mainContent) mainContent.classList.remove('hidden');
+  if (mainFooter) mainFooter.classList.remove('hidden');
+  
+  window.scrollTo(0, 0);
+}
+
+// Back to Home from My Page
+function backToHome() {
+  showHomePage();
+}
+
+// Handle Logout
+function handleLogout() {
+  if (confirm('ログアウトしてもよろしいですか？')) {
+    userSession = {
+      isAuthenticated: false,
+      isGuest: false,
+      email: null,
+      userId: null
+    };
+    
+    // Update header
+    updateHeaderAuth();
+    
+    alert('ログアウトしました。');
+    showHomePage();
+  }
+}
+
+// Update header authentication state
+function updateHeaderAuth() {
+  const myPageLink = document.getElementById('myPageLink');
+  const logoutLink = document.getElementById('logoutLink');
+  
+  if (userSession.isAuthenticated) {
+    if (myPageLink) myPageLink.classList.remove('hidden');
+    if (logoutLink) logoutLink.classList.remove('hidden');
+  } else {
+    if (myPageLink) myPageLink.classList.add('hidden');
+    if (logoutLink) logoutLink.classList.add('hidden');
+  }
+}
+
+// Switch My Page Tab
+function switchMyPageTab(tab) {
+  console.log('Switching to tab:', tab);
+  
+  // Update tab buttons
+  const tabBookings = document.getElementById('tabBookings');
+  const tabProfile = document.getElementById('tabProfile');
+  
+  if (tab === 'bookings') {
+    if (tabBookings) {
+      tabBookings.classList.add('active');
+      tabProfile.classList.remove('active');
+    }
+  } else if (tab === 'profile') {
+    if (tabProfile) {
+      tabProfile.classList.add('active');
+      tabBookings.classList.remove('active');
+    }
+  }
+  
+  // Update tab content
+  const bookingsTab = document.getElementById('bookingsTab');
+  const profileTab = document.getElementById('profileTab');
+  
+  if (tab === 'bookings') {
+    if (bookingsTab) bookingsTab.classList.remove('hidden');
+    if (profileTab) profileTab.classList.add('hidden');
+  } else if (tab === 'profile') {
+    if (bookingsTab) bookingsTab.classList.add('hidden');
+    if (profileTab) profileTab.classList.remove('hidden');
+  }
+}
+
+// Load Bookings List
+function loadBookingsList() {
+  console.log('Loading bookings list');
+  
+  const bookingsList = document.getElementById('bookingsList');
+  if (!bookingsList) return;
+  
+  if (mockBookings.length === 0) {
+    bookingsList.innerHTML = `
+      <div class="text-center py-12 text-gray-500">
+        <i class="fas fa-inbox text-6xl mb-4"></i>
+        <p class="text-lg">予約履歴がありません</p>
+      </div>
+    `;
+    return;
+  }
+  
+  bookingsList.innerHTML = mockBookings.map(booking => {
+    const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 
+                       booking.status === 'cancelled' ? 'status-cancelled' : 
+                       'status-completed';
+    
+    return `
+      <div class="booking-card p-6 rounded-xl cursor-pointer" onclick="showBookingDetail('${booking.id}')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h4 class="text-lg font-bold text-gray-800 mb-1">
+              予約番号: ${booking.id}
+            </h4>
+            <p class="text-sm text-gray-500">予約日: ${booking.bookingDate}</p>
+          </div>
+          <span class="status-badge ${statusClass}">
+            ${booking.statusText}
+          </span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">
+              <i class="fas fa-plane-departure text-blue-600 mr-2"></i>
+              往路
+            </p>
+            <p class="font-semibold">${booking.flight.outbound.from} → ${booking.flight.outbound.to}</p>
+            <p class="text-sm text-gray-600">${booking.flight.outbound.date} ${booking.flight.outbound.departureTime}</p>
+            <p class="text-sm text-gray-600">${booking.flight.outbound.flightNumber} - ${booking.flight.outbound.seatClass}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">
+              <i class="fas fa-plane-arrival text-blue-600 mr-2"></i>
+              復路
+            </p>
+            <p class="font-semibold">${booking.flight.return.from} → ${booking.flight.return.to}</p>
+            <p class="text-sm text-gray-600">${booking.flight.return.date} ${booking.flight.return.departureTime}</p>
+            <p class="text-sm text-gray-600">${booking.flight.return.flightNumber} - ${booking.flight.return.seatClass}</p>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+          <p class="text-sm text-gray-600">
+            乗客数: ${booking.passengers.length}名
+          </p>
+          <p class="text-xl font-bold text-blue-600">
+            ¥${booking.pricing.total.toLocaleString()}
+          </p>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Show Booking Detail
+function showBookingDetail(bookingId) {
+  console.log('Showing booking detail:', bookingId);
+  
+  const booking = mockBookings.find(b => b.id === bookingId);
+  if (!booking) {
+    alert('予約情報が見つかりません。');
+    return;
+  }
+  
+  currentBookingDetail = booking;
+  
+  const modal = document.getElementById('bookingDetailModal');
+  const content = document.getElementById('bookingDetailContent');
+  const cancelBtn = document.getElementById('cancelBookingBtn');
+  
+  if (!modal || !content) return;
+  
+  // Hide cancel button if booking is cancelled or completed
+  if (cancelBtn) {
+    if (booking.status === 'cancelled' || booking.status === 'completed') {
+      cancelBtn.classList.add('hidden');
+    } else {
+      cancelBtn.classList.remove('hidden');
+    }
+  }
+  
+  const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 
+                     booking.status === 'cancelled' ? 'status-cancelled' : 
+                     'status-completed';
+  
+  content.innerHTML = `
+    <div class="space-y-6">
+      <!-- Status -->
+      <div class="flex justify-between items-center">
+        <div>
+          <h4 class="text-xl font-bold text-gray-800">予約番号: ${booking.id}</h4>
+          <p class="text-sm text-gray-500">予約日: ${booking.bookingDate}</p>
+        </div>
+        <span class="status-badge ${statusClass}">
+          ${booking.statusText}
+        </span>
+      </div>
+      
+      <!-- Flight Information -->
+      <div class="bg-blue-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-plane text-blue-600 mr-2"></i>
+          フライト情報
+        </h5>
+        
+        <div class="space-y-4">
+          <!-- Outbound -->
+          <div class="bg-white p-4 rounded-lg">
+            <p class="text-sm text-gray-600 mb-2">
+              <i class="fas fa-plane-departure text-blue-600 mr-2"></i>
+              往路
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="font-semibold text-lg">${booking.flight.outbound.from} → ${booking.flight.outbound.to}</p>
+                <p class="text-sm text-gray-600">${booking.flight.outbound.date}</p>
+                <p class="text-sm text-gray-600">${booking.flight.outbound.departureTime} - ${booking.flight.outbound.arrivalTime}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">便名: ${booking.flight.outbound.flightNumber}</p>
+                <p class="text-sm text-gray-600">航空会社: ${booking.flight.outbound.airline}</p>
+                <p class="text-sm text-gray-600">座席クラス: ${booking.flight.outbound.seatClass}</p>
+                <p class="text-sm text-gray-600">座席番号: ${booking.flight.outbound.seat}</p>
+                <p class="text-sm text-gray-600">所要時間: ${booking.flight.outbound.duration}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Return -->
+          <div class="bg-white p-4 rounded-lg">
+            <p class="text-sm text-gray-600 mb-2">
+              <i class="fas fa-plane-arrival text-blue-600 mr-2"></i>
+              復路
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="font-semibold text-lg">${booking.flight.return.from} → ${booking.flight.return.to}</p>
+                <p class="text-sm text-gray-600">${booking.flight.return.date}</p>
+                <p class="text-sm text-gray-600">${booking.flight.return.departureTime} - ${booking.flight.return.arrivalTime}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">便名: ${booking.flight.return.flightNumber}</p>
+                <p class="text-sm text-gray-600">航空会社: ${booking.flight.return.airline}</p>
+                <p class="text-sm text-gray-600">座席クラス: ${booking.flight.return.seatClass}</p>
+                <p class="text-sm text-gray-600">座席番号: ${booking.flight.return.seat}</p>
+                <p class="text-sm text-gray-600">所要時間: ${booking.flight.return.duration}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Passenger Information -->
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-users text-blue-600 mr-2"></i>
+          乗客情報
+        </h5>
+        ${booking.passengers.map((passenger, index) => `
+          <div class="bg-white p-4 rounded-lg mb-2">
+            <p class="font-semibold mb-2">乗客 ${index + 1}</p>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <p class="text-gray-600">氏名: ${passenger.lastName} ${passenger.firstName}</p>
+              <p class="text-gray-600">性別: ${passenger.gender}</p>
+              <p class="text-gray-600">生年月日: ${passenger.dob}</p>
+              <p class="text-gray-600">国籍: ${passenger.nationality}</p>
+              <p class="text-gray-600">パスポート番号: ${passenger.passport}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <!-- Contact Information -->
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-envelope text-blue-600 mr-2"></i>
+          連絡先情報
+        </h5>
+        <div class="bg-white p-4 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+            <p class="text-gray-600">メールアドレス: ${booking.contact.email}</p>
+            <p class="text-gray-600">電話番号: ${booking.contact.phone}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pricing -->
+      <div class="bg-blue-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-credit-card text-blue-600 mr-2"></i>
+          料金詳細
+        </h5>
+        <div class="bg-white p-4 rounded-lg space-y-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">基本料金:</span>
+            <span class="font-semibold">¥${booking.pricing.basePrice.toLocaleString()}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">座席アップグレード:</span>
+            <span class="font-semibold">¥${booking.pricing.seatUpgrade.toLocaleString()}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">税金・手数料:</span>
+            <span class="font-semibold">¥${booking.pricing.taxFees.toLocaleString()}</span>
+          </div>
+          <div class="border-t border-gray-200 pt-2 flex justify-between">
+            <span class="font-bold text-lg">合計:</span>
+            <span class="font-bold text-xl text-blue-600">¥${booking.pricing.total.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  modal.classList.remove('hidden');
+}
+
+// Close Booking Detail Modal
+function closeBookingDetailModal() {
+  const modal = document.getElementById('bookingDetailModal');
+  if (modal) modal.classList.add('hidden');
+  currentBookingDetail = null;
+}
+
+// Show Cancel Confirmation
+function showCancelConfirmation() {
+  const modal = document.getElementById('cancelConfirmModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+// Close Cancel Confirmation
+function closeCancelConfirmation() {
+  const modal = document.getElementById('cancelConfirmModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+// Confirm Cancel Booking
+function confirmCancelBooking() {
+  if (!currentBookingDetail) return;
+  
+  console.log('Cancelling booking:', currentBookingDetail.id);
+  
+  // Update booking status
+  const booking = mockBookings.find(b => b.id === currentBookingDetail.id);
+  if (booking) {
+    booking.status = 'cancelled';
+    booking.statusText = 'キャンセル済み';
+  }
+  
+  // Close modals
+  closeCancelConfirmation();
+  closeBookingDetailModal();
+  
+  // Reload bookings list
+  loadBookingsList();
+  
+  alert('予約をキャンセルしました。\nキャンセル確認メールを送信しました。');
+}
+
+// Load User Profile
+function loadUserProfile() {
+  console.log('Loading user profile');
+  
+  document.getElementById('profileEmail').value = userProfile.email;
+  document.getElementById('profileLastName').value = userProfile.lastName;
+  document.getElementById('profileFirstName').value = userProfile.firstName;
+  document.getElementById('profilePhone').value = userProfile.phone;
+  document.getElementById('profileDob').value = userProfile.dob;
+  document.getElementById('profileGender').value = userProfile.gender;
+  document.getElementById('profilePassport').value = userProfile.passport;
+  document.getElementById('profileNationality').value = userProfile.nationality;
+}
+
+// Cancel Profile Edit
+function cancelProfileEdit() {
+  if (confirm('変更を破棄してもよろしいですか？')) {
+    loadUserProfile();
+  }
+}
+
+// Handle Profile Form Submit
+document.addEventListener('DOMContentLoaded', function() {
+  const profileForm = document.getElementById('profileForm');
+  if (profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Validate required fields
+      const lastName = document.getElementById('profileLastName').value.trim();
+      const firstName = document.getElementById('profileFirstName').value.trim();
+      const phone = document.getElementById('profilePhone').value.trim();
+      const dob = document.getElementById('profileDob').value;
+      const gender = document.getElementById('profileGender').value;
+      
+      if (!lastName || !firstName || !phone || !dob || !gender) {
+        alert('必須項目を入力してください。');
+        return;
+      }
+      
+      // Update user profile
+      userProfile.lastName = lastName;
+      userProfile.firstName = firstName;
+      userProfile.phone = phone;
+      userProfile.dob = dob;
+      userProfile.gender = gender;
+      userProfile.passport = document.getElementById('profilePassport').value.trim();
+      userProfile.nationality = document.getElementById('profileNationality').value.trim();
+      
+      console.log('Profile updated:', userProfile);
+      
+      alert('会員情報を更新しました。');
+    });
+  }
+});
