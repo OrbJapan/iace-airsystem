@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航空券予約システム - FlightSearch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-plane text-3xl"></i>
+                    <h1 class="text-2xl font-bold">FlightSearch</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="/" class="hover:text-blue-200 transition">
+                        <i class="fas fa-plane mr-1"></i>
+                        フライト
+                    </a>
+                    <a href="/jrpass" class="hover:text-blue-200 transition">
+                        <i class="fas fa-train mr-1"></i>
+                        JR Pass
+                    </a>
+                    <a href="#" onclick="showMyPage(); return false;" class="hover:text-blue-200 transition" id="myPageLink">
+                        <i class="fas fa-user mr-1"></i>
+                        マイページ
+                    </a>
+                    <a href="#" onclick="handleLogout(); return false;" class="hover:text-blue-200 transition hidden" id="logoutLink">
+                        <i class="fas fa-sign-out-alt mr-1"></i>
+                        ログアウト
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Hero Section -->
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">お得な航空券を検索</h2>
+                <p class="text-gray-600">世界中のフライトを比較して、最安値を見つけましょう</p>
+            </div>
+
+            <!-- Search Form -->
+            <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-8">
+                <!-- Trip Type Selection -->
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="tripType" value="roundtrip" checked class="w-4 h-4 text-blue-600" onchange="handleTripTypeChange()" />
+                        <span class="text-gray-700 font-medium">往復</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="tripType" value="oneway" class="w-4 h-4 text-blue-600" onchange="handleTripTypeChange()" />
+                        <span class="text-gray-700 font-medium">片道</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="tripType" value="multicity" class="w-4 h-4 text-blue-600" onchange="handleTripTypeChange()" />
+                        <span class="text-gray-700 font-medium">複数都市</span>
+                    </label>
+                </div>
+
+                <!-- Single/Round Trip Search Fields -->
+                <div id="singleTripFields">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <!-- From -->
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">出発地</label>
+                            <div class="relative">
+                                <i class="fas fa-plane-departure absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="fromLocation" placeholder="東京 (TYO)" 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                            </div>
+                        </div>
+
+                        <!-- To -->
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">目的地</label>
+                            <div class="relative">
+                                <i class="fas fa-plane-arrival absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="toLocation" placeholder="ニューヨーク (JFK)" 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                            </div>
+                        </div>
+
+                        <!-- Departure Date -->
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">出発日</label>
+                            <div class="relative">
+                                <i class="fas fa-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="date" id="departureDate" 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                            </div>
+                        </div>
+
+                        <!-- Return Date -->
+                        <div class="relative" id="returnDateField">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">帰国日</label>
+                            <div class="relative">
+                                <i class="fas fa-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="date" id="returnDate" 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passengers and Class -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">搭乗者数</label>
+                            <div class="relative">
+                                <i class="fas fa-users absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="number" id="passengers" value="1" min="1" max="9" 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">クラス</label>
+                            <div class="relative">
+                                <i class="fas fa-chair absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <select id="travelClass" 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none">
+                                    <option value="economy">エコノミー</option>
+                                    <option value="premium_economy">プレミアムエコノミー</option>
+                                    <option value="business">ビジネス</option>
+                                    <option value="first">ファースト</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-City Fields (Hidden by default) -->
+                <div id="multiCityFields" class="hidden">
+                    <div id="multiCitySegments"></div>
+                    <button type="button" onclick="addMultiCitySegment()" 
+                        class="mt-4 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">
+                        <i class="fas fa-plus mr-2"></i>区間を追加
+                    </button>
+                </div>
+
+                <!-- Search Button -->
+                <div class="text-center">
+                    <button onclick="handleSearch()" 
+                        class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-lg">
+                        <i class="fas fa-search mr-2"></i>検索
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div id="searchResults" class="hidden">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">検索結果</h3>
+                <div id="resultsList" class="space-y-4">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">FlightSearch</h3>
+                    <p class="text-gray-400">世界中の航空券を最安値で検索</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">リンク</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/" class="hover:text-white transition">ホーム</a></li>
+                        <li><a href="/jrpass" class="hover:text-white transition">JR Pass</a></li>
+                        <li><a href="#" onclick="showMyPage(); return false;" class="hover:text-white transition">マイページ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">お問い合わせ</h4>
+                    <p class="text-gray-400">support@flightsearch.com</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 FlightSearch. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

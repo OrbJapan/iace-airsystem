@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JR Pass Order - IACE Travel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .pass-type-tab {
+      @apply px-8 py-3 font-semibold transition-all duration-200 cursor-pointer;
+    }
+    .pass-type-tab.active {
+      @apply bg-green-700 text-white;
+    }
+    .pass-type-tab:not(.active) {
+      @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+    }
+    .progress-step {
+      @apply flex-1 text-center py-3 text-white font-semibold relative;
+    }
+    .progress-step.active {
+      @apply bg-green-700;
+    }
+    .progress-step.completed {
+      @apply bg-green-600;
+    }
+    .progress-step:not(.active):not(.completed) {
+      @apply bg-gray-300 text-gray-600;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen">
+  <!-- Header -->
+  <header class="bg-green-700 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <i class="fas fa-train text-3xl"></i>
+          <h1 class="text-2xl font-bold">JR Pass Order</h1>
+        </div>
+        <nav class="hidden md:flex space-x-6">
+          <a href="/" class="hover:text-green-200 transition">
+            <i class="fas fa-plane mr-1"></i>
+            Flights
+          </a>
+          <a href="/jrpass" class="hover:text-green-200 transition">
+            <i class="fas fa-train mr-1"></i>
+            JR Pass
+          </a>
+          <a href="/" onclick="showMyPage(); return false;" class="hover:text-green-200 transition">
+            <i class="fas fa-user mr-1"></i>
+            My Page
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="bg-white shadow-md">
+    <div class="container mx-auto px-4">
+      <div class="flex">
+        <div class="progress-step active" data-step="1">
+          <span>1. Choose Pass</span>
+        </div>
+        <div class="progress-step" data-step="2">
+          <span>2. Order Info</span>
+        </div>
+        <div class="progress-step" data-step="3">
+          <span>3. Payment Info</span>
+        </div>
+        <div class="progress-step" data-step="4">
+          <span>4. Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Step 1: Choose Pass -->
+    <div id="step1" class="jrpass-step">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Pass Selection -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-green-800 mb-4">1. Choose Pass</h2>
+            
+            <!-- Pass Type Tabs -->
+            <div class="flex mb-6 rounded-lg overflow-hidden">
+              <button class="pass-type-tab active" data-pass-type="ordinary" onclick="switchPassType('ordinary')">
+                Ordinary
+              </button>
+              <button class="pass-type-tab" data-pass-type="green" onclick="switchPassType('green')">
+                Green
+              </button>
+            </div>
+
+            <!-- Ordinary Options -->
+            <div id="ordinaryOptions" class="space-y-6">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Adult (from 12 years old)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <div class="text-center mb-3">
+                      <div class="text-green-700 font-semibold mb-1">7 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 321.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('adult', 7, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <div class="text-center mb-3">
+                      <div class="text-green-700 font-semibold mb-1">14 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 514.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('adult', 14, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <div class="text-center mb-3">
+                      <div class="text-green-700 font-semibold mb-1">21 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 643.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('adult', 21, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Child (6-11 years old)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <div class="text-center mb-3">
+                      <div class="text-green-700 font-semibold mb-1">7 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 161.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('child', 7, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <div class="text-center mb-3">
+                      <div class="text-green-700 font-semibold mb-1">14 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 257.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('child', 14, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <div class="text-center mb-3">
+                      <div class="text-green-700 font-semibold mb-1">21 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 321.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('child', 21, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Green Options (hidden by default) -->
+            <div id="greenOptions" class="space-y-6 hidden">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Adult (from 12 years old)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-300">
+                    <div class="text-center mb-3">
+                      <div class="text-amber-700 font-semibold mb-1">7 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 450.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('adult', 7, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-300">
+                    <div class="text-center mb-3">
+                      <div class="text-amber-700 font-semibold mb-1">14 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 720.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('adult', 14, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-300">
+                    <div class="text-center mb-3">
+                      <div class="text-amber-700 font-semibold mb-1">21 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 900.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('adult', 21, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Child (6-11 years old)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-300">
+                    <div class="text-center mb-3">
+                      <div class="text-amber-700 font-semibold mb-1">7 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 225.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('child', 7, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-300">
+                    <div class="text-center mb-3">
+                      <div class="text-amber-700 font-semibold mb-1">14 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 360.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('child', 14, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-300">
+                    <div class="text-center mb-3">
+                      <div class="text-amber-700 font-semibold mb-1">21 Days</div>
+                      <div class="text-2xl font-bold text-gray-800">USD 450.00</div>
+                    </div>
+                    <select class="pass-quantity-select w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onchange="updatePassQuantity('child', 21, this.value)">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+            <h3 class="text-xl font-bold text-green-800 mb-4">Order Details</h3>
+            
+            <div class="mb-4">
+              <div class="text-sm text-gray-600 mb-2">Quantity: <span id="orderQuantity" class="font-semibold">0</span> Person(s)</div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4 mb-4 space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Subtotal</span>
+                <span class="font-semibold">USD $<span id="orderSubtotal">0.00</span></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Handling Fee</span>
+                <span class="font-semibold">USD $<span id="orderHandlingFee">30.00</span></span>
+              </div>
+            </div>
+
+            <div class="border-t-2 border-gray-300 pt-4 mb-6">
+              <div class="flex justify-between text-lg font-bold">
+                <span>Total</span>
+                <span class="text-green-700">USD $<span id="orderTotal">0.00</span></span>
+              </div>
+              <p class="text-xs text-red-600 mt-2">* Shipping is not included.</p>
+            </div>
+
+            <button id="proceedToOrderInfo" onclick="proceedToOrderInfo()"
+              class="w-full bg-green-700 text-white py-3 rounded-lg hover:bg-green-800 font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled>
+              Proceed
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Order Info -->
+    <div id="step2" class="jrpass-step hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-green-800 mb-6">2. Order Info</h2>
+        <p class="text-sm text-gray-600 mb-6">Please fill the information below in English.</p>
+        <p class="text-sm text-red-600 mb-6">* Required fields</p>
+        
+        <div id="orderInfoContainer">
+          <!-- Form will be rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Payment (handled by Stripe) -->
+    <div id="step3" class="jrpass-step hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+        <h2 class="text-2xl font-bold text-green-800 mb-4">3. Payment Info</h2>
+        <p class="text-gray-600">Redirecting to Stripe Checkout...</p>
+      </div>
+    </div>
+
+    <!-- Step 4: Complete -->
+    <div id="step4" class="jrpass-step hidden">
+      <div id="orderCompleteContainer">
+        <!-- Order complete content will be rendered dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2026 IACE Travel. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/static/jrpass.js"></script>
+</body>
+</html>
