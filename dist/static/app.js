@@ -2579,7 +2579,19 @@ function loadBookingsList() {
 function showJRPassDetail(orderId) {
   console.log('Showing JR Pass detail:', orderId);
   
-  const order = mockJRPassOrders.find(o => o.orderId === orderId);
+  // Try to find order from mockJRPassOrders first
+  let order = mockJRPassOrders.find(o => o.orderId === orderId);
+  
+  // If not found, try localStorage
+  if (!order) {
+    try {
+      const savedOrders = JSON.parse(localStorage.getItem('jrPassOrders') || '[]');
+      order = savedOrders.find(o => o.orderId === orderId);
+    } catch (e) {
+      console.error('Failed to load order from localStorage:', e);
+    }
+  }
+  
   if (!order) {
     alert('Order not found.');
     return;
