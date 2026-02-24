@@ -1618,12 +1618,20 @@ app.get('/', (c) => {
             <div class="bg-white rounded-2xl shadow-xl mb-6 overflow-hidden">
               <div class="flex border-b">
                 <button
-                  onclick="switchMyPageTab('bookings')"
-                  id="tabBookings"
+                  onclick="switchMyPageTab('flights')"
+                  id="tabFlights"
                   class="flex-1 py-4 px-6 font-semibold text-center transition mypage-tab active"
                 >
-                  <i class="fas fa-list mr-2"></i>
-                  予約履歴
+                  <i class="fas fa-plane mr-2"></i>
+                  航空券予約
+                </button>
+                <button
+                  onclick="switchMyPageTab('jrpass')"
+                  id="tabJRPass"
+                  class="flex-1 py-4 px-6 font-semibold text-center transition mypage-tab"
+                >
+                  <i class="fas fa-train mr-2"></i>
+                  JRパス購入履歴
                 </button>
                 <button
                   onclick="switchMyPageTab('profile')"
@@ -1636,16 +1644,30 @@ app.get('/', (c) => {
               </div>
             </div>
 
-            {/* Bookings Tab */}
-            <div id="bookingsTab" class="mypage-tab-content">
+            {/* Flight Bookings Tab */}
+            <div id="flightsTab" class="mypage-tab-content">
               <div class="bg-white rounded-2xl shadow-xl p-6">
                 <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                  <i class="fas fa-history text-blue-600 mr-2"></i>
-                  予約履歴
+                  <i class="fas fa-plane text-blue-600 mr-2"></i>
+                  航空券予約履歴
                 </h3>
                 
-                <div id="bookingsList" class="space-y-4">
-                  {/* Booking items will be inserted here by JavaScript */}
+                <div id="flightBookingsList" class="space-y-4">
+                  {/* Flight booking items will be inserted here by JavaScript */}
+                </div>
+              </div>
+            </div>
+
+            {/* JR Pass Orders Tab */}
+            <div id="jrpassTab" class="mypage-tab-content hidden">
+              <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                  <i class="fas fa-train text-green-600 mr-2"></i>
+                  JRパス購入履歴
+                </h3>
+                
+                <div id="jrpassOrdersList" class="space-y-4">
+                  {/* JR Pass order items will be inserted here by JavaScript */}
                 </div>
               </div>
             </div>

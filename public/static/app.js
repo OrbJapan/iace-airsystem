@@ -2321,14 +2321,15 @@ function showMyPage() {
       myPageUserEmail.textContent = `ログイン中: ${userSession.email}`;
     }
     
-    // Load bookings
-    loadBookingsList();
+    // Load flight bookings and JR Pass orders
+    loadFlightBookings();
+    loadJRPassOrders();
     
     // Load profile
     loadUserProfile();
     
-    // Show bookings tab by default
-    switchMyPageTab('bookings');
+    // Show flights tab by default
+    switchMyPageTab('flights');
     
     window.scrollTo(0, 0);
   }
@@ -2391,188 +2392,203 @@ function switchMyPageTab(tab) {
   console.log('Switching to tab:', tab);
   
   // Update tab buttons
-  const tabBookings = document.getElementById('tabBookings');
+  const tabFlights = document.getElementById('tabFlights');
+  const tabJRPass = document.getElementById('tabJRPass');
   const tabProfile = document.getElementById('tabProfile');
   
-  if (tab === 'bookings') {
-    if (tabBookings) {
-      tabBookings.classList.add('active');
-      tabProfile.classList.remove('active');
-    }
-  } else if (tab === 'profile') {
-    if (tabProfile) {
-      tabProfile.classList.add('active');
-      tabBookings.classList.remove('active');
-    }
+  // Remove active class from all tabs
+  if (tabFlights) tabFlights.classList.remove('active');
+  if (tabJRPass) tabJRPass.classList.remove('active');
+  if (tabProfile) tabProfile.classList.remove('active');
+  
+  // Add active class to selected tab
+  if (tab === 'flights' && tabFlights) {
+    tabFlights.classList.add('active');
+  } else if (tab === 'jrpass' && tabJRPass) {
+    tabJRPass.classList.add('active');
+  } else if (tab === 'profile' && tabProfile) {
+    tabProfile.classList.add('active');
   }
   
   // Update tab content
-  const bookingsTab = document.getElementById('bookingsTab');
+  const flightsTab = document.getElementById('flightsTab');
+  const jrpassTab = document.getElementById('jrpassTab');
   const profileTab = document.getElementById('profileTab');
   
-  if (tab === 'bookings') {
-    if (bookingsTab) bookingsTab.classList.remove('hidden');
-    if (profileTab) profileTab.classList.add('hidden');
-  } else if (tab === 'profile') {
-    if (bookingsTab) bookingsTab.classList.add('hidden');
-    if (profileTab) profileTab.classList.remove('hidden');
+  // Hide all tabs
+  if (flightsTab) flightsTab.classList.add('hidden');
+  if (jrpassTab) jrpassTab.classList.add('hidden');
+  if (profileTab) profileTab.classList.add('hidden');
+  
+  // Show selected tab
+  if (tab === 'flights' && flightsTab) {
+    flightsTab.classList.remove('hidden');
+  } else if (tab === 'jrpass' && jrpassTab) {
+    jrpassTab.classList.remove('hidden');
+  } else if (tab === 'profile' && profileTab) {
+    profileTab.classList.remove('hidden');
   }
 }
 
-// Load Bookings List (Flight + JR Pass)
-function loadBookingsList() {
-  console.log('Loading bookings list');
+// Load Flight Bookings List
+function loadFlightBookings() {
+  console.log('Loading flight bookings list');
   
-  const bookingsList = document.getElementById('bookingsList');
-  if (!bookingsList) return;
+  const flightBookingsList = document.getElementById('flightBookingsList');
+  if (!flightBookingsList) return;
   
-  // Combine flight bookings and JR Pass orders
-  const allItems = [];
+  if (mockBookings.length === 0) {
+    flightBookingsList.innerHTML = `
+      <div class="text-center py-12 text-gray-500">
+        <i class="fas fa-inbox text-6xl mb-4"></i>
+        <p class="text-lg">航空券予約履歴がありません</p>
+      </div>
+    `;
+    return;
+  }
   
-  // Add flight bookings
-  mockBookings.forEach(booking => {
-    allItems.push({
-      type: 'flight',
-      date: booking.bookingDate,
-      data: booking
-    });
-  });
+  flightBookingsList.innerHTML = mockBookings.map(booking => {
+    const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 
+                       booking.status === 'cancelled' ? 'status-cancelled' : 
+                       'status-completed';
+    
+    return `
+      <div class="booking-card p-6 rounded-xl cursor-pointer" onclick="showBookingDetail('${booking.id}')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h4 class="text-lg font-bold text-gray-800 mb-1">
+              <i class="fas fa-plane text-blue-600 mr-2"></i>
+              航空券予約番号: ${booking.id}
+            </h4>
+            <p class="text-sm text-gray-500">予約日: ${booking.bookingDate}</p>
+          </div>
+          <span class="status-badge ${statusClass}">
+            ${booking.statusText}
+          </span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">
+              <i class="fas fa-plane-departure text-blue-600 mr-2"></i>
+              往路
+            </p>
+            <p class="font-semibold">${booking.flight.outbound.from} → ${booking.flight.outbound.to}</p>
+            <p class="text-sm text-gray-600">${booking.flight.outbound.date} ${booking.flight.outbound.departureTime}</p>
+            <p class="text-sm text-gray-600">${booking.flight.outbound.flightNumber} - ${booking.flight.outbound.seatClass}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">
+              <i class="fas fa-plane-arrival text-blue-600 mr-2"></i>
+              復路
+            </p>
+            <p class="font-semibold">${booking.flight.return.from} → ${booking.flight.return.to}</p>
+            <p class="text-sm text-gray-600">${booking.flight.return.date} ${booking.flight.return.departureTime}</p>
+            <p class="text-sm text-gray-600">${booking.flight.return.flightNumber} - ${booking.flight.return.seatClass}</p>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+          <p class="text-sm text-gray-600">
+            乗客数: ${booking.passengers.length}名
+          </p>
+          <p class="text-xl font-bold text-blue-600">
+            ¥${booking.pricing.total.toLocaleString()}
+          </p>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Load JR Pass Orders List
+function loadJRPassOrders() {
+  console.log('Loading JR Pass orders list');
+  
+  const jrpassOrdersList = document.getElementById('jrpassOrdersList');
+  if (!jrpassOrdersList) return;
   
   // Load JR Pass orders from localStorage
+  let allOrders = [];
   try {
     const savedOrders = JSON.parse(localStorage.getItem('jrPassOrders') || '[]');
     console.log('Loaded JR Pass orders from localStorage:', savedOrders);
-    savedOrders.forEach(order => {
-      allItems.push({
-        type: 'jrpass',
-        date: order.orderDate,
-        data: order
-      });
-    });
+    allOrders = savedOrders;
   } catch (e) {
     console.error('Failed to load JR Pass orders from localStorage:', e);
   }
   
   // Also add from mockJRPassOrders if available
   mockJRPassOrders.forEach(order => {
-    allItems.push({
-      type: 'jrpass',
-      date: order.orderDate,
-      data: order
-    });
+    // Check if order already exists in allOrders
+    if (!allOrders.find(o => o.orderId === order.orderId)) {
+      allOrders.push(order);
+    }
   });
   
   // Sort by date (newest first)
-  allItems.sort((a, b) => new Date(b.date) - new Date(a.date));
+  allOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
   
-  if (allItems.length === 0) {
-    bookingsList.innerHTML = `
+  if (allOrders.length === 0) {
+    jrpassOrdersList.innerHTML = `
       <div class="text-center py-12 text-gray-500">
         <i class="fas fa-inbox text-6xl mb-4"></i>
-        <p class="text-lg">予約履歴がありません</p>
+        <p class="text-lg">JRパス購入履歴がありません</p>
       </div>
     `;
     return;
   }
   
-  bookingsList.innerHTML = allItems.map(item => {
-    if (item.type === 'flight') {
-      const booking = item.data;
-      const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 
-                         booking.status === 'cancelled' ? 'status-cancelled' : 
-                         'status-completed';
-      
-      return `
-        <div class="booking-card p-6 rounded-xl cursor-pointer" onclick="showBookingDetail('${booking.id}')">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h4 class="text-lg font-bold text-gray-800 mb-1">
-                <i class="fas fa-plane text-blue-600 mr-2"></i>
-                航空券予約番号: ${booking.id}
-              </h4>
-              <p class="text-sm text-gray-500">予約日: ${booking.bookingDate}</p>
-            </div>
-            <span class="status-badge ${statusClass}">
-              ${booking.statusText}
-            </span>
+  jrpassOrdersList.innerHTML = allOrders.map(order => {
+    const statusClass = order.status === 'confirmed' ? 'status-confirmed' : 
+                       order.status === 'shipped' ? 'status-completed' : 
+                       'status-cancelled';
+    
+    return `
+      <div class="booking-card p-6 rounded-xl cursor-pointer bg-green-50 border-2 border-green-200" onclick="showJRPassDetail('${order.orderId}')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h4 class="text-lg font-bold text-gray-800 mb-1">
+              <i class="fas fa-train text-green-600 mr-2"></i>
+              JR Pass Order: ${order.orderId}
+            </h4>
+            <p class="text-sm text-gray-500">Order Date: ${order.orderDate}</p>
           </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <p class="text-sm text-gray-600 mb-1">
-                <i class="fas fa-plane-departure text-blue-600 mr-2"></i>
-                往路
-              </p>
-              <p class="font-semibold">${booking.flight.outbound.from} → ${booking.flight.outbound.to}</p>
-              <p class="text-sm text-gray-600">${booking.flight.outbound.date} ${booking.flight.outbound.departureTime}</p>
-              <p class="text-sm text-gray-600">${booking.flight.outbound.flightNumber} - ${booking.flight.outbound.seatClass}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600 mb-1">
-                <i class="fas fa-plane-arrival text-blue-600 mr-2"></i>
-                復路
-              </p>
-              <p class="font-semibold">${booking.flight.return.from} → ${booking.flight.return.to}</p>
-              <p class="text-sm text-gray-600">${booking.flight.return.date} ${booking.flight.return.departureTime}</p>
-              <p class="text-sm text-gray-600">${booking.flight.return.flightNumber} - ${booking.flight.return.seatClass}</p>
-            </div>
-          </div>
-          
-          <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-            <p class="text-sm text-gray-600">
-              乗客数: ${booking.passengers.length}名
-            </p>
-            <p class="text-xl font-bold text-blue-600">
-              ¥${booking.pricing.total.toLocaleString()}
-            </p>
+          <span class="status-badge ${statusClass}">
+            ${order.statusText}
+          </span>
+        </div>
+        
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 mb-2">
+            <i class="fas fa-ticket-alt text-green-600 mr-2"></i>
+            Pass Details
+          </p>
+          <div class="space-y-1">
+            ${order.items.map(item => `
+              <p class="font-semibold">${item.passType} - ${item.duration} Days (${item.ageGroup}): ${item.quantity}x</p>
+            `).join('')}
           </div>
         </div>
-      `;
-    } else if (item.type === 'jrpass') {
-      const order = item.data;
-      const statusClass = order.status === 'confirmed' ? 'status-confirmed' : 
-                         order.status === 'shipped' ? 'status-completed' : 
-                         'status-cancelled';
-      
-      return `
-        <div class="booking-card p-6 rounded-xl cursor-pointer bg-green-50 border-2 border-green-200" onclick="showJRPassDetail('${order.orderId}')">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h4 class="text-lg font-bold text-gray-800 mb-1">
-                <i class="fas fa-train text-green-600 mr-2"></i>
-                JR Pass Order: ${order.orderId}
-              </h4>
-              <p class="text-sm text-gray-500">Order Date: ${order.orderDate}</p>
-            </div>
-            <span class="status-badge ${statusClass}">
-              ${order.statusText}
-            </span>
-          </div>
-          
-          <div class="mb-4">
-            <p class="text-sm text-gray-600 mb-2">
-              <i class="fas fa-ticket-alt text-green-600 mr-2"></i>
-              Pass Details
-            </p>
-            <div class="space-y-1">
-              ${order.items.map(item => `
-                <p class="font-semibold">${item.passType} - ${item.duration} Days (${item.ageGroup}): ${item.quantity}x</p>
-              `).join('')}
-            </div>
-          </div>
-          
-          <div class="flex justify-between items-center pt-4 border-t border-green-300">
-            <p class="text-sm text-gray-600">
-              Total Quantity: ${order.items.reduce((sum, item) => sum + item.quantity, 0)} Pass(es)
-            </p>
-            <p class="text-xl font-bold text-green-600">
-              USD $${order.total.toFixed(2)}
-            </p>
-          </div>
+        
+        <div class="flex justify-between items-center pt-4 border-t border-green-300">
+          <p class="text-sm text-gray-600">
+            Total Quantity: ${order.items.reduce((sum, item) => sum + item.quantity, 0)} Pass(es)
+          </p>
+          <p class="text-xl font-bold text-green-600">
+            USD $${order.total.toFixed(2)}
+          </p>
         </div>
-      `;
-    }
+      </div>
+    `;
   }).join('');
+}
+
+// Load Bookings List (Flight + JR Pass) - DEPRECATED, kept for compatibility
+function loadBookingsList() {
+  console.log('Loading bookings list (deprecated - use loadFlightBookings and loadJRPassOrders instead)');
+  loadFlightBookings();
+  loadJRPassOrders();
 }
 
 // Show JR Pass Detail
