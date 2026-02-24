@@ -1915,9 +1915,23 @@ app.post('/api/search', async (c) => {
 })
 
 
-// JR Pass Route - redirect to static HTML
+// JR Pass Route - serve JR Pass page
 app.get('/jrpass', (c) => {
-  return c.redirect('/jrpass.html')
+  return c.html(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JR Pass Order - IACE Travel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link href="/static/style.css" rel="stylesheet"/>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen">
+  <div id="jrpass-app"></div>
+  <script src="/static/jrpass.js"></script>
+</body>
+</html>`)
 })
 
 export default app
