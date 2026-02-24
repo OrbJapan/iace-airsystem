@@ -9,7 +9,7 @@
 ### 本番環境（Cloudflare Pages）
 - **メインサイト（航空券予約）**: https://webapp-8at.pages.dev/
 - **JRパス購入サイト**: https://webapp-8at.pages.dev/jrpass
-- **最新デプロイURL**: https://7b78e39d.webapp-8at.pages.dev/
+- **最新デプロイURL**: https://b635e68f.webapp-8at.pages.dev/
 
 ### 開発環境（サンドボックス）
 - **メインサイト**: https://3000-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai/
@@ -110,6 +110,8 @@
 - **予約履歴表示** → 航空券予約の履歴を一覧で確認
 - **JRパス購入履歴** → JRパス購入の履歴を一覧で確認 ✅
 - **統合表示** → 航空券とJRパスの履歴を1つのマイページで管理 ✅
+- **localStorage永続化** → JRパス購入データをブラウザに保存 ✅
+- **自動ログイン** → テスト用に認証なしでマイページにアクセス可能 ✅
 - **予約詳細確認** → 各予約の詳細情報を表示
 - **予約キャンセル** → オンラインで予約をキャンセル
 - **会員情報編集** → 登録情報の更新
