@@ -1694,6 +1694,9 @@ let userProfile = {
   nationality: '日本'
 };
 
+// Mock JR Pass orders data
+let mockJRPassOrders = [];
+
 // Mock booking data
 let mockBookings = [
   {
@@ -2413,14 +2416,38 @@ function switchMyPageTab(tab) {
   }
 }
 
-// Load Bookings List
+// Load Bookings List (Flight + JR Pass)
 function loadBookingsList() {
   console.log('Loading bookings list');
   
   const bookingsList = document.getElementById('bookingsList');
   if (!bookingsList) return;
   
-  if (mockBookings.length === 0) {
+  // Combine flight bookings and JR Pass orders
+  const allItems = [];
+  
+  // Add flight bookings
+  mockBookings.forEach(booking => {
+    allItems.push({
+      type: 'flight',
+      date: booking.bookingDate,
+      data: booking
+    });
+  });
+  
+  // Add JR Pass orders
+  mockJRPassOrders.forEach(order => {
+    allItems.push({
+      type: 'jrpass',
+      date: order.orderDate,
+      data: order
+    });
+  });
+  
+  // Sort by date (newest first)
+  allItems.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  if (allItems.length === 0) {
     bookingsList.innerHTML = `
       <div class="text-center py-12 text-gray-500">
         <i class="fas fa-inbox text-6xl mb-4"></i>
@@ -2429,6 +2456,217 @@ function loadBookingsList() {
     `;
     return;
   }
+  
+  bookingsList.innerHTML = allItems.map(item => {
+    if (item.type === 'flight') {
+      const booking = item.data;
+      const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 
+                         booking.status === 'cancelled' ? 'status-cancelled' : 
+                         'status-completed';
+      
+      return `
+        <div class="booking-card p-6 rounded-xl cursor-pointer" onclick="showBookingDetail('${booking.id}')">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h4 class="text-lg font-bold text-gray-800 mb-1">
+                <i class="fas fa-plane text-blue-600 mr-2"></i>
+                航空券予約番号: ${booking.id}
+              </h4>
+              <p class="text-sm text-gray-500">予約日: ${booking.bookingDate}</p>
+            </div>
+            <span class="status-badge ${statusClass}">
+              ${booking.statusText}
+            </span>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">
+                <i class="fas fa-plane-departure text-blue-600 mr-2"></i>
+                往路
+              </p>
+              <p class="font-semibold">${booking.flight.outbound.from} → ${booking.flight.outbound.to}</p>
+              <p class="text-sm text-gray-600">${booking.flight.outbound.date} ${booking.flight.outbound.departureTime}</p>
+              <p class="text-sm text-gray-600">${booking.flight.outbound.flightNumber} - ${booking.flight.outbound.seatClass}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600 mb-1">
+                <i class="fas fa-plane-arrival text-blue-600 mr-2"></i>
+                復路
+              </p>
+              <p class="font-semibold">${booking.flight.return.from} → ${booking.flight.return.to}</p>
+              <p class="text-sm text-gray-600">${booking.flight.return.date} ${booking.flight.return.departureTime}</p>
+              <p class="text-sm text-gray-600">${booking.flight.return.flightNumber} - ${booking.flight.return.seatClass}</p>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+            <p class="text-sm text-gray-600">
+              乗客数: ${booking.passengers.length}名
+            </p>
+            <p class="text-xl font-bold text-blue-600">
+              ¥${booking.pricing.total.toLocaleString()}
+            </p>
+          </div>
+        </div>
+      `;
+    } else if (item.type === 'jrpass') {
+      const order = item.data;
+      const statusClass = order.status === 'confirmed' ? 'status-confirmed' : 
+                         order.status === 'shipped' ? 'status-completed' : 
+                         'status-cancelled';
+      
+      return `
+        <div class="booking-card p-6 rounded-xl cursor-pointer bg-green-50 border-2 border-green-200" onclick="showJRPassDetail('${order.orderId}')">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h4 class="text-lg font-bold text-gray-800 mb-1">
+                <i class="fas fa-train text-green-600 mr-2"></i>
+                JR Pass Order: ${order.orderId}
+              </h4>
+              <p class="text-sm text-gray-500">Order Date: ${order.orderDate}</p>
+            </div>
+            <span class="status-badge ${statusClass}">
+              ${order.statusText}
+            </span>
+          </div>
+          
+          <div class="mb-4">
+            <p class="text-sm text-gray-600 mb-2">
+              <i class="fas fa-ticket-alt text-green-600 mr-2"></i>
+              Pass Details
+            </p>
+            <div class="space-y-1">
+              ${order.items.map(item => `
+                <p class="font-semibold">${item.passType} - ${item.duration} Days (${item.ageGroup}): ${item.quantity}x</p>
+              `).join('')}
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center pt-4 border-t border-green-300">
+            <p class="text-sm text-gray-600">
+              Total Quantity: ${order.items.reduce((sum, item) => sum + item.quantity, 0)} Pass(es)
+            </p>
+            <p class="text-xl font-bold text-green-600">
+              USD $${order.total.toFixed(2)}
+            </p>
+          </div>
+        </div>
+      `;
+    }
+  }).join('');
+}
+
+// Show JR Pass Detail
+function showJRPassDetail(orderId) {
+  console.log('Showing JR Pass detail:', orderId);
+  
+  const order = mockJRPassOrders.find(o => o.orderId === orderId);
+  if (!order) {
+    alert('Order not found.');
+    return;
+  }
+  
+  const modal = document.getElementById('bookingDetailModal');
+  const content = document.getElementById('bookingDetailContent');
+  
+  if (!modal || !content) return;
+  
+  const statusClass = order.status === 'confirmed' ? 'status-confirmed' : 
+                     order.status === 'shipped' ? 'status-completed' : 
+                     'status-cancelled';
+  
+  content.innerHTML = `
+    <div class="space-y-6">
+      <!-- Status -->
+      <div class="flex justify-between items-center">
+        <div>
+          <h4 class="text-xl font-bold text-gray-800">Order Number: ${order.orderId}</h4>
+          <p class="text-sm text-gray-500">Order Date: ${order.orderDate}</p>
+        </div>
+        <span class="status-badge ${statusClass}">
+          ${order.statusText}
+        </span>
+      </div>
+      
+      <!-- JR Pass Information -->
+      <div class="bg-green-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-train text-green-600 mr-2"></i>
+          JR Pass Information
+        </h5>
+        
+        <div class="space-y-3">
+          ${order.items.map(item => `
+            <div class="bg-white p-4 rounded-lg">
+              <p class="font-semibold text-lg">${item.passType} Pass</p>
+              <p class="text-sm text-gray-600">Duration: ${item.duration} Days</p>
+              <p class="text-sm text-gray-600">Age Group: ${item.ageGroup}</p>
+              <p class="text-sm text-gray-600">Quantity: ${item.quantity}x</p>
+              <p class="text-sm font-semibold text-green-600">Price: USD $${item.price.toFixed(2)} each</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <!-- Traveler Information -->
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-users text-blue-600 mr-2"></i>
+          Traveler Information
+        </h5>
+        
+        <div class="space-y-3">
+          ${order.travelers.map((traveler, index) => `
+            <div class="bg-white p-4 rounded-lg">
+              <p class="font-semibold">Traveler ${index + 1}</p>
+              <p class="text-sm text-gray-600">Name: ${traveler.fullName}</p>
+              <p class="text-sm text-gray-600">Passport: ${traveler.passport}</p>
+              <p class="text-sm text-gray-600">Nationality: ${traveler.nationality}</p>
+              <p class="text-sm text-gray-600">Date of Birth: ${traveler.dob}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <!-- Pricing -->
+      <div class="bg-blue-50 p-4 rounded-lg">
+        <h5 class="font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-dollar-sign text-blue-600 mr-2"></i>
+          Pricing Details
+        </h5>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span>Subtotal</span>
+            <span class="font-semibold">USD $${order.subtotal.toFixed(2)}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Handling Fee</span>
+            <span class="font-semibold">USD $${order.handlingFee.toFixed(2)}</span>
+          </div>
+          <div class="flex justify-between pt-2 border-t-2 border-gray-300">
+            <span class="font-bold text-lg">Total</span>
+            <span class="font-bold text-lg text-green-600">USD $${order.total.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Hide cancel button for JR Pass orders
+  const cancelBtn = document.getElementById('cancelBookingBtn');
+  if (cancelBtn) {
+    cancelBtn.classList.add('hidden');
+  }
+  
+  modal.classList.remove('hidden');
+}
+
+// Original loadBookingsList content continues with flight bookings
+function loadFlightBookingsOnly() {
+  const bookingsList = document.getElementById('bookingsList');
+  if (!bookingsList) return;
   
   bookingsList.innerHTML = mockBookings.map(booking => {
     const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 
@@ -2743,3 +2981,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// Handle hash navigation for My Page
+window.addEventListener('hashchange', function() {
+  if (window.location.hash === '#mypage') {
+    // Simulate authentication for demo
+    if (!userSession.isAuthenticated) {
+      userSession.isAuthenticated = true;
+      userSession.email = 'user@example.com';
+      userSession.userId = 'user123';
+      updateHeaderAuth();
+    }
+    showMyPage();
+  }
+});
+
+// Check hash on page load
+if (window.location.hash === '#mypage') {
+  // Simulate authentication for demo
+  if (!userSession.isAuthenticated) {
+    userSession.isAuthenticated = true;
+    userSession.email = 'user@example.com';
+    userSession.userId = 'user123';
+    updateHeaderAuth();
+  }
+  setTimeout(() => {
+    showMyPage();
+  }, 100);
+}

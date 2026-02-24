@@ -396,6 +396,36 @@ function proceedToPayment() {
 function renderOrderComplete() {
   const container = document.getElementById('orderCompleteContainer');
   
+  // Generate order ID
+  const orderId = `JRP${Date.now()}`;
+  const orderDate = new Date().toISOString().split('T')[0];
+  
+  // Save order to global mockJRPassOrders (defined in app.js)
+  const orderData = {
+    orderId: orderId,
+    orderDate: orderDate,
+    status: 'confirmed',
+    statusText: 'Order Confirmed',
+    passType: currentOrder.passType,
+    items: currentOrder.items.map(item => ({
+      passType: item.passType.charAt(0).toUpperCase() + item.passType.slice(1),
+      ageGroup: item.ageType.charAt(0).toUpperCase() + item.ageType.slice(1),
+      duration: item.duration,
+      quantity: item.quantity,
+      price: item.total / item.quantity
+    })),
+    travelers: currentOrder.userInfo || [],
+    subtotal: currentOrder.subtotal,
+    handlingFee: currentOrder.handlingFee,
+    total: currentOrder.total
+  };
+  
+  // Add to global orders array (defined in app.js)
+  if (typeof mockJRPassOrders !== 'undefined') {
+    mockJRPassOrders.unshift(orderData);
+    console.log('JR Pass order saved:', orderData);
+  }
+  
   let html = `
     <div class="max-w-3xl mx-auto">
       <div class="bg-white rounded-lg p-8 shadow-lg text-center mb-6">
@@ -404,7 +434,7 @@ function renderOrderComplete() {
         </div>
         <h2 class="text-3xl font-bold text-gray-800 mb-2">Order Complete!</h2>
         <p class="text-gray-600 mb-4">Thank you for your purchase.</p>
-        <p class="text-lg font-semibold text-green-700">Order Number: #JRP${Date.now()}</p>
+        <p class="text-lg font-semibold text-green-700">Order Number: #${orderId}</p>
       </div>
       
       <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
@@ -456,7 +486,7 @@ function renderOrderComplete() {
       </div>
       
       <div class="flex justify-center space-x-4">
-        <button onclick="window.location.href='/mypage'"
+        <button onclick="goToMyPage()"
           class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
           <i class="fas fa-user mr-2"></i>
           Go to My Page
@@ -471,6 +501,12 @@ function renderOrderComplete() {
   `;
   
   container.innerHTML = html;
+}
+
+// Navigate to My Page
+function goToMyPage() {
+  // Redirect to main site's my page
+  window.location.href = '/#mypage';
 }
 
 // Initialize on page load
