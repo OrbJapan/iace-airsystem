@@ -423,7 +423,17 @@ function renderOrderComplete() {
   // Add to global orders array (defined in app.js)
   if (typeof mockJRPassOrders !== 'undefined') {
     mockJRPassOrders.unshift(orderData);
-    console.log('JR Pass order saved:', orderData);
+    console.log('JR Pass order saved to mockJRPassOrders:', orderData);
+  }
+  
+  // Also save to localStorage for persistence
+  try {
+    const existingOrders = JSON.parse(localStorage.getItem('jrPassOrders') || '[]');
+    existingOrders.unshift(orderData);
+    localStorage.setItem('jrPassOrders', JSON.stringify(existingOrders));
+    console.log('JR Pass order saved to localStorage:', orderData);
+  } catch (e) {
+    console.error('Failed to save order to localStorage:', e);
   }
   
   let html = `

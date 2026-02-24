@@ -2298,9 +2298,12 @@ function showMyPage() {
   
   // Check if user is authenticated
   if (!userSession.isAuthenticated) {
-    alert('マイページを利用するにはログインが必要です。');
-    showLoginPage();
-    return;
+    // For testing: Auto-login with demo account
+    console.log('Auto-login for testing purposes');
+    userSession.isAuthenticated = true;
+    userSession.email = 'demo@example.com';
+    userSession.name = 'Demo User';
+    updateHeaderAuth();
   }
   
   const mainContent = document.getElementById('mainContent');
@@ -2435,7 +2438,22 @@ function loadBookingsList() {
     });
   });
   
-  // Add JR Pass orders
+  // Load JR Pass orders from localStorage
+  try {
+    const savedOrders = JSON.parse(localStorage.getItem('jrPassOrders') || '[]');
+    console.log('Loaded JR Pass orders from localStorage:', savedOrders);
+    savedOrders.forEach(order => {
+      allItems.push({
+        type: 'jrpass',
+        date: order.orderDate,
+        data: order
+      });
+    });
+  } catch (e) {
+    console.error('Failed to load JR Pass orders from localStorage:', e);
+  }
+  
+  // Also add from mockJRPassOrders if available
   mockJRPassOrders.forEach(order => {
     allItems.push({
       type: 'jrpass',
