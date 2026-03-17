@@ -570,6 +570,75 @@ function generateSampleFlights(from, to, depDate, retDate) {
 
     flightCards.innerHTML += card;
   }
+  
+  // Generate airline lowest fares section
+  generateAirlineLowestFares(airlines, stops);
+}
+
+// Generate airline tabs and price grid
+function generateAirlineLowestFares(airlines, stops) {
+  const tabsList = document.getElementById('airlineTabsList');
+  const priceGrid = document.getElementById('airlinePriceGrid');
+  
+  if (!tabsList || !priceGrid) return;
+  
+  tabsList.innerHTML = '';
+  priceGrid.innerHTML = '';
+  
+  // Generate airline tabs
+  airlines.forEach((airline, index) => {
+    const tab = document.createElement('button');
+    tab.className = 'flex-shrink-0 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex flex-col items-center min-w-[120px]';
+    tab.innerHTML = `
+      <img src="${airline.logo}" alt="${airline.name}" class="w-12 h-6 object-contain mb-2" onerror="this.style.display='none'">
+      <div class="text-sm font-semibold text-gray-800">${airline.name}</div>
+      <div class="text-xs text-gray-500">(他を含む)</div>
+    `;
+    tabsList.appendChild(tab);
+  });
+  
+  // Generate price grid for each airline
+  airlines.forEach((airline, index) => {
+    const basePrice = 80000 + (index * 15000);
+    const directPrice = basePrice;
+    const oneStopPrice = basePrice + 30000;
+    
+    const priceCell = document.createElement('div');
+    priceCell.className = 'text-center';
+    priceCell.innerHTML = `
+      <div class="text-xs text-gray-600 mb-1">${airline.code}</div>
+      <div class="font-bold text-gray-800">¥${directPrice.toLocaleString()}</div>
+      <div class="text-xs text-gray-500">¥${oneStopPrice.toLocaleString()}</div>
+    `;
+    priceGrid.appendChild(priceCell);
+  });
+  
+  // Update summary prices
+  const allPrices = airlines.map((airline, index) => 80000 + (index * 15000));
+  const minPrice = Math.min(...allPrices);
+  const maxPrice = Math.max(...allPrices);
+  
+  document.getElementById('bestPrice').textContent = minPrice.toLocaleString();
+  document.getElementById('cheapestPrice').textContent = minPrice.toLocaleString();
+  document.getElementById('shortestPrice').textContent = Math.round(maxPrice * 1.3).toLocaleString();
+  document.getElementById('flexiblePrice').textContent = Math.round((minPrice + maxPrice) / 2).toLocaleString();
+}
+
+// Scroll airline tabs
+function scrollAirlineTabs(direction) {
+  const container = document.getElementById('airlineTabsContainer');
+  const scrollAmount = 300;
+  
+  if (direction === 'left') {
+    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  } else {
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  }
+}
+
+// Scroll route types (placeholder)
+function scrollRouteTypes(direction) {
+  console.log('Route type scroll:', direction);
 }
 
 // Global variables for modal
