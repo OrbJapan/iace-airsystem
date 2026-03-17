@@ -9,7 +9,8 @@
 ### 本番環境（Cloudflare Pages）
 - **メインサイト（航空券予約）**: https://webapp-8at.pages.dev/
 - **JRパス購入サイト**: https://webapp-8at.pages.dev/jrpass
-- **最新デプロイURL**: https://a58df9f6.webapp-8at.pages.dev/
+- **JRパス機能ドキュメント**: https://webapp-8at.pages.dev/jrpass-docs
+- **最新デプロイURL**: https://eb6804ff.webapp-8at.pages.dev/
 
 ### 開発環境（サンドボックス）
 - **メインサイト**: https://3000-ixum760vzlh6kn5x9qt8b-dfc00ec5.sandbox.novita.ai/
@@ -17,6 +18,7 @@
 
 ### リポジトリ
 - **GitHub**: https://github.com/yamazakitakayuki/iace-airsystem
+- **ドキュメント**: [JRパス機能詳細](./JRPASS_FEATURES.md)
 
 ---
 
@@ -264,7 +266,7 @@ webapp/
 ---
 
 ## 最終更新日
-2026-02-24 (航空券予約とJRパス購入履歴を別タブで表示)
+2026-02-24 (JRパス機能ドキュメントページを追加)
 
 ---
 
