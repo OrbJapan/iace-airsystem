@@ -470,7 +470,7 @@ function generateSampleFlights(from, to, depDate, retDate) {
     { type: '2-stop', label: '2回経由', duration: '19時間20分', via: 'シアトル, シカゴ' }
   ];
 
-  const flightCards = document.getElementById('flightCards');
+  const flightCards = document.getElementById('resultsList');
   flightCards.innerHTML = '';
 
   // Generate 8 sample flights
